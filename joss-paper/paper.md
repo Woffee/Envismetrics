@@ -275,8 +275,9 @@ where peak potentials and corresponding peak currents are identified using Funct
 </div>
 
 <figcaption style="width: 100%; text-align: center; margin-top: 10px;">
-  <strong>Figure 3.</strong> Visual outputs from the CV module: (a) Peak searching module (CV-2), (b) Randles–Ševčík analysis module (CV-3).
+  <strong>Figure 3.</strong> Visual outputs from the CV module: (a) Peak searching module (CV-2), (b) Randles–Ševčík analysis module (CV-3; conceptual output shown here, available in local version but not yet on the online platform).
 </figcaption>
+
 
 ## Step Techniques Structure: CA Module
 
