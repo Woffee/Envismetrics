@@ -135,9 +135,11 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
   - A **simulated data point** (▲) is also shown for theoretical comparison
 
 > ⚠️ **Important Note on Figure 3b:**  
-> The triangular simulated peak current in Figure 3b is based on a **new feature available in the local (Python) version** of Envismetrics.  
-> This feature is **not yet available** in the web version at the time of submission. To reproduce Figure 3b exactly, please use the local codebase from GitHub. The current online tool only performs linear regression based on experimental data.
-
+> The triangular simulated peak current shown in Figure 3b is generated using a **newly implemented feature in the local (Python) version** of Envismetrics.  
+> This feature is **not yet available** in the web-based version at the time of submission.  
+> To reproduce Figure 3b exactly, please refer to the local codebase on GitHub. The web version currently supports only experimental data fitting and linear regression.  
+> For precise reproduction, see:  
+> [`CV_General.ipynb`](https://github.com/Woffee/Envismetrics/blob/main/src/CV_General.ipynb), section: **`## (Function 3) 3.2 Randles–Ševčík analysis module – mechanism verification module`**
 ---
 
 ### Additional Notes
