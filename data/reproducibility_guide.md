@@ -148,3 +148,53 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
 - You can hover over the `?` icons for helpful guidance in the web tool  
 - These settings were calibrated to reproduce the manuscript figures exactly  
 
+## 3. Figure 4a and 4b: Step Techniques (Chronoamperometry Module)
+
+**Dataset location:**  
+[`data/test_data/05132024_CA_D`](https://github.com/Woffee/Envismetrics/tree/main/data/test_data/05132024_CA_D)
+
+**Files used:**
+- `1_DMAB_120s_CA.xlsx`  
+- `2_DMAB_120s_CA.xlsx`  
+- `3_DMAB_120s_CA.xlsx`  
+- `4_DMAB_120s_CA.xlsx`  
+- `5_DMAB_120s_CA.xlsx`  
+- `6_DMAB_120s_CA.xlsx`  
+- `7_DMAB_120s_CA.xlsx`  
+
+Each file contains a current–time response (i–t curve) recorded during chronoamperometry (CA) for DMAB at different applied potentials. These are used for **Cottrell-based diffusion coefficient analysis**.
+
+---
+
+### Steps to Reproduce
+
+1. Go to the [CA module](http://34.162.1.1:8080/step_methods)  
+2. Upload all **7 files** listed above  
+3. Click **Submit** to access **CA-1** (current–time visualization)  
+   - This corresponds to **Figure 4a**: Overlay of i–t curves  
+4. Click **Next** to proceed to **CA-2** (Diffusion Coefficient Analysis)  
+5. Use the following parameter settings:
+
+| Parameter                                | Value                            | Explanation                                                                |
+|------------------------------------------|----------------------------------|----------------------------------------------------------------------------|
+| **Number of electrons (n)**              | `1`                              | Number of electrons transferred in the DMAB oxidation                      |
+| **Concentration of solute (C)**          | `0.000848608e-3 mol/cm³`         | Bulk concentration of DMAB                                                 |
+| **Electrode surface area (A)**           | `0.07068583470577035 cm²`        | Geometric area of the gold working electrode                               |
+| **Regression time range (s)**            | `[0, 1]`                          | Time window used for Cottrell regression (linear fit of I vs. t⁻¹ᐟ²)       |
+
+6. Click **Submit** to generate results  
+   - This corresponds to **Figure 4b**: Linear regression for diffusion coefficient extraction
+
+---
+
+### Output
+
+- **Figure 4a:** Overlay of current vs. time curves from all input files  
+- **Figure 4b:** Diffusion coefficient fitting using the Cottrell equation
+
+---
+
+### Notes
+
+- All data files record current for 120 seconds at a fixed potential, under identical experimental conditions  
+- The chosen regression time range `[0, 1]` seconds captures the early diffusion-controlled regime, minimizing capacitive current effects  
