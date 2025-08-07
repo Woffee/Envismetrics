@@ -95,17 +95,18 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
 4. Click **Submit** to proceed to the **CV-2.1** page  
 5. In **Function 2: Peak searching**, use the following settings:
 
-| Parameter                    | Value                                               | Explanation                                                                 |
-|-----------------------------|-----------------------------------------------------|-----------------------------------------------------------------------------|
-| **Peak range (top)**        | `(-1, -0.70), (0, 0.2), (0.25, 0.5)`                | Voltage ranges where oxidation peaks are expected                           |
-| **Peak range (bottom)**     | `(-0.925, -0.75), (0.0, 0.125), (0.125, 0.25)`      | Voltage ranges where reduction peaks are expected                           |
-| **Peak 1 – Scan Rate Range**     | `10 to 100 mV/s`                         | Scan rates used for Peak 1 analysis (replaces discard-from/after)          |
-| **Peak 2 – Scan Rate Range**     | `10 to 100 mV/s`                         | Scan rates used for Peak 2 analysis (replaces discard-from/after)          |
-| **Peak 3 – Scan Rate Range**     | `10 to 80 mV/s`                          | Scan rates used for Peak 3 analysis (excludes lowest and highest rates)    |
-| **Cycle range**             | `(2, 100)`                                          | Only cycles within this range are used in the peak analysis                  |
-| **Scan rate to display**    | `20` mV/s                                           | Highlights the curve at 20 mV/s in the display                               |
-| **Cycle number to display** | `9`                                                 | The 9th cycle will be shown in the figure                                    |
-| **Which method to use**     | `Max`                                               | Peak current is determined by the maximum value                              |
+| Parameter                        | Value                                              | Explanation                                                                  |
+|----------------------------------|----------------------------------------------------|------------------------------------------------------------------------------|
+| **Peak range (top)**             | `(-1, -0.70), (0, 0.2), (0.25, 0.5)`               | Voltage ranges where oxidation peaks are expected                            |
+| **Peak range (bottom)**          | `(-0.925, -0.75), (0.0, 0.125), (0.125, 0.25)`     | Voltage ranges where reduction peaks are expected                            |
+| **Peak 1 – Scan Rate Range**     | `10 to 100 mV/s`                                   | Scan rates used for Peak 1 analysis (via slider)                             |
+| **Peak 2 – Scan Rate Range**     | `10 to 100 mV/s`                                   | Scan rates used for Peak 2 analysis (via slider)                             |
+| **Peak 3 – Scan Rate Range**     | `20 to 80 mV/s`                                    | Scan rates used for Peak 3 analysis (via slider)                             |
+| **Cycle range**                  | `2 to 100`                                         | Only cycles within this range are used in the peak analysis                  |
+| **Scan rate to display**         | `20 mV/s`                                          | Highlights the curve at 20 mV/s in the display                               |
+| **Cycle number to display**      | `9`                                                | The 9th cycle will be shown in the figure                                    |
+| **Which method to use**          | `Max`                                              | Peak current is determined by the maximum value within the selected range    |
+
 
 6. Click **Submit** to proceed to the **CV-2.2** page  
 7. The results generated correspond to:
