@@ -99,8 +99,9 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
 |-----------------------------|-----------------------------------------------------|-----------------------------------------------------------------------------|
 | **Peak range (top)**        | `(-1, -0.70), (0, 0.2), (0.25, 0.5)`                | Voltage ranges where oxidation peaks are expected                           |
 | **Peak range (bottom)**     | `(-0.925, -0.75), (0.0, 0.125), (0.125, 0.25)`      | Voltage ranges where reduction peaks are expected                           |
-| **Discard scan rate from**  | `0, 0, 0`                                           | Discards scan rates at the beginning of the sequence — here, none discarded |
-| **Discard scan rate after** | `0, 0, 2`                                           | Discards scan rates at the end — only for the 3rd peak (last 2 scan rates)  |
+| **Peak 1 – Scan Rate Range**     | `10 to 100 mV/s`                         | Scan rates used for Peak 1 analysis (replaces discard-from/after)          |
+| **Peak 2 – Scan Rate Range**     | `10 to 100 mV/s`                         | Scan rates used for Peak 2 analysis (replaces discard-from/after)          |
+| **Peak 3 – Scan Rate Range**     | `10 to 80 mV/s`                          | Scan rates used for Peak 3 analysis (excludes lowest and highest rates)    |
 | **Cycle range**             | `(2, 100)`                                          | Only cycles within this range are used in the peak analysis                  |
 | **Scan rate to display**    | `20` mV/s                                           | Highlights the curve at 20 mV/s in the display                               |
 | **Cycle number to display** | `9`                                                 | The 9th cycle will be shown in the figure                                    |
