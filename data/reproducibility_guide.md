@@ -6,7 +6,7 @@ All required input files are included in this GitHub folder:
 🔗 [`/data/test_data/`](https://github.com/Woffee/Envismetrics/tree/main/data/test_data)
 
 ---
-## Figure 2a and 2b: Hydrodynamic Voltammetry (HDV Module)
+## 1. Figure 2a and 2b: Hydrodynamic Voltammetry (HDV Module)
 
 **Dataset location:**  
 [`data/test_data/05202024_HDV_D40_A1`](https://github.com/Woffee/Envismetrics/tree/main/data/test_data/05202024_HDV_D40_A1)
