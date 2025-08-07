@@ -64,31 +64,34 @@ Each file contains a linear sweep voltammetry (LSV) curve recorded at a specific
 
 
 ---
-## 🧪 Subplots 3 and 4: Cyclic Voltammetry (CV Module)
+## 2. Figure 3a and 3b: Cyclic Voltammetry (CV Module)
 
 **Folder used:**  
-[data/test_data/06102024_CV_D_AF](https://github.com/Woffee/Envismetrics/tree/main/data/test_data/06102024_CV_D_AF)
+[`data/test_data/01112023_CV_DMAB`](https://github.com/Woffee/Envismetrics/tree/main/data/test_data/01112023_CV_DMAB)
 
-**Files:**  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_10mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_20mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_30mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_40mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_50mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_60mVs_CV.xlsx  
-- GP_0.05gLDMAB_40gLKOH_-1.1to0.7_70mVs_CV.xlsx
+**Files:**
+- `G_P_KOH40.0032gL_DMAB0.0475gL_100mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_10mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_20mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_30mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_40mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_50mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_60mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_70mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_80mVs_CV.xlsx`
+- `G_P_KOH40.0032gL_DMAB0.0475gL_90mVs_CV.xlsx`
 
 Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at a different scan rate. These are required for **Randles–Ševčík analysis** and **standard rate constant estimation**.
 
 ---
 
-### 🔧 Steps to Reproduce
+### Steps to Reproduce
 
 1. Go to the [CV module](http://34.162.1.1:8080/cv) to open the **CV-1** page  
-2. Upload **all 7 files** listed above  
+2. Upload **all 10 files** listed above  
 3. Keep default settings:  
    - **Gaussian filter sigma**: `10`  
-   - **Cycle of representative**: `6` (can be any number base on experiment setting in here is 1-12)  
+   - **Cycle of representative**: `6` (for this dataset, any cycle between 1–12 is acceptable)  
 4. Click **Submit** to proceed to the **CV-2.1** page  
 5. In **Function 2: Peak searching**, use the following settings:
 
@@ -102,9 +105,10 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
 | **Scan rate to display**    | `20` mV/s                                           | Highlights the curve at 20 mV/s in the display                               |
 | **Cycle number to display** | `9`                                                 | The 9th cycle will be shown in the figure                                    |
 | **Which method to use**     | `Max`                                               | Peak current is determined by the maximum value                              |
+
 6. Click **Submit** to proceed to the **CV-2.2** page  
 7. The results generated correspond to:
-   - **Subplot 3 (Figure 2c):** Peak overlay plot with scan rate info
+   - **Figure 3a**: Peak overlay plot and scan rate-dependent peak current curves
 
 ---
 
@@ -114,27 +118,29 @@ Each file contains a cyclic voltammetry (CV) curve of DMAB oxidation recorded at
 | Parameter                                | Value                         | Explanation                                                                 |
 |------------------------------------------|-------------------------------|-----------------------------------------------------------------------------|
 | **Number of electron transfer (n)**      | `1`                           | Number of electrons involved in redox reaction                             |
-| **Concentration of material (C)**        | `0.000000894454 mol/cm³`      | Bulk concentration of DMAB used in the CV test                             |
+| **Concentration of material (C)**        | `0.000806e-3 mol/cm³`         | Bulk concentration of DMAB used in the CV test                             |
 | **Temperature (T)**                      | `298.15 K`                    | Standard room temperature in Kelvin                                         |
-| **Electrode diameter**                   | `0.30 cm`                     | Diameter of the glassy carbon disk electrode used in this setup            |
+| **Electrode diameter**                   | `0.16 cm`                     | Diameter of the glassy carbon disk electrode used in this setup            |
 
-
-10. Click **Submit** to see the results  
-
----
-
-### 📈 Output
-
-- **Subplot 3 (Figure 2c)**: Peak current vs. scan rate from Function 2  
-- **Subplot 4 (Figure 2d)**: Randles–Ševčík plot (Ip vs. √v) and regression line
+10. Click **Submit** to view the results
 
 ---
 
-### ❗ Notes
+### Output
 
-- If using your own CV dataset, ensure it contains **at least 3 scan rates** for Randles–Ševčík to function.
-- Click the **"?"** icons in the tool for helpful parameter tips.
-- The default settings were chosen to exactly reproduce the manuscript results using this dataset.
-- **Subplot 4 (Figure 2d)** includes a new feature in the core code — simulated peak currents based on a given diffusion coefficient (shown as triangles ▲ in the plot).  
-  ⚠️ **Note:** This simulation functionality is not yet available in the online tool. To reproduce this feature, use the core Python script in the source code instead. The online version currently only supports diffusion coefficient fitting from experimental data.
+- **Figure 3a**: Peak current vs. scan rate from Function 2  
+- **Figure 3b**: Randles–Ševčík plot (Ip vs. √v) including linear regression  
+  - A **simulated data point** (▲) is also shown for theoretical comparison
+
+> ⚠️ **Important Note on Figure 3b:**  
+> The triangular simulated peak current in Figure 3b is based on a **new feature available in the local (Python) version** of Envismetrics.  
+> This feature is **not yet available** in the web version at the time of submission. To reproduce Figure 3b exactly, please use the local codebase from GitHub. The current online tool only performs linear regression based on experimental data.
+
+---
+
+### Additional Notes
+
+- When using your own CV dataset, ensure it includes **at least 3 different scan rates**  
+- You can hover over the `?` icons for helpful guidance in the web tool  
+- These settings were calibrated to reproduce the manuscript figures exactly  
 
