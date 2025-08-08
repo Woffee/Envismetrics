@@ -126,8 +126,8 @@ class CA(BaseModule):
                     U = df['WE(1).Potential (V)']
                     plt.plot(t, U, linestyle='-', linewidth=1, color='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Applied potential/V')
+                plt.xlabel(r'$\mathit{Time} \,(t) \,/\, \mathrm{s} $')
+                plt.ylabel(r'$\mathit{Current} \,(I) \,/\, \mathrm{A}$')
                 plt.title('A', loc='left', bbox=dict(facecolor='white', edgecolor='black'))
                 # plt.ylim(-2e-5,2e-5)
                 # plt.grid()
@@ -147,8 +147,8 @@ class CA(BaseModule):
 
                     plt.scatter(t, I, s=1, c='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Current/A')
+                plt.xlabel(r'$\mathit{Time} \,(t) \,/\, \mathrm{s} $')
+                plt.ylabel(r'$\mathit{Current} \,(I) \,/\, \mathrm{A}$')
                 plt.title('B', loc='right', bbox=dict(facecolor='white', edgecolor='black'))
                 # plt.ylim(-2e-5,2e-5)
                 # plt.grid()
@@ -257,8 +257,8 @@ class CA(BaseModule):
 
                 # Plot t vs I
                 plt.scatter(t, I, s=2, color='#1f77b4')
-                plt.xlabel('Time (s)')
-                plt.ylabel('Current (A)')
+                plt.xlabel(r'$\mathit{Time} \,(t) \,/\, \mathrm{s} $')
+                plt.ylabel(r'$\mathit{Current} \,(I) \,/\, \mathrm{A}$')
                 plt.subplots_adjust(left=0.2)  # 将左边距设置为 0.2，单位是相对于图像宽度的比例
                 # plt.grid()
                 # plt.show()
@@ -291,9 +291,10 @@ class CA(BaseModule):
                 # Plot Bt vs I with the regression line
                 plt.scatter(Bt, I, s=2, color='#1f77b4')
                 plt.plot(Bt, slope * Bt + intercept, color='red', label='Regression Line')
-                plt.xlabel('nFAC₀ π ⁻¹/² t⁻¹/²')
+                plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+                plt.xlabel('$\mathrm{[n \cdot F \cdot A \cdot C_0 \cdot π^{-1/2}]\ t^{-1/2}}$')
+                plt.ylabel('$Current\ (\mathrm{I})\ /\ \mathrm{A}$')
 
-                plt.ylabel('Current (A)')
                 # plt.grid()
                 plt.legend()
                 plt.subplots_adjust(left=0.2)  # 将左边距设置为 0.2，单位是相对于图像宽度的比例

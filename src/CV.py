@@ -706,8 +706,8 @@ class CV(BaseModule):
             #         print("length of E:",len(E))
             plt.scatter(E, I, label=scan_rate, s=1)
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
+        plt.xlabel('$Applied potential\,(E)\,/\,V$')
+        plt.ylabel('$Current\,(I)\,/\,A$')
         # plt.ylim(-2e-5,2e-5)
         plt.legend()
         # plt.grid()
@@ -728,8 +728,8 @@ class CV(BaseModule):
             E = df['WE(1).Potential (V)']
             I = df['WE(1).Current (A)']
             plt.scatter(E, I, label=scan_rate, s=1)
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
+        plt.xlabel('$Applied potential\,(E)\,/\,V$')
+        plt.ylabel('$Current\,(I)\,/\,A$')
         plt.legend()
         to_file3 = os.path.join(self.savepath, "form1_cycle.png")
         plt.savefig(to_file3)
@@ -892,19 +892,7 @@ class CV(BaseModule):
                 Ef1.append(Ef1i)
 
                 Scan_Rate1.append(num)
-                #         print('bottom_x1:',bottom_x1)
-                #         print('bottom_y1:',bottom_y1)
-            #     plt.scatter(upperU, smoothed_upperI, s=2, c='#1f77b4')
-            #     plt.scatter(lowerU, smoothed_lowerI, s=2, c='#ff7f0e')
-            #
-            # plt.scatter(Ea1j, Ia1j, s=10, c='r')
-            # plt.scatter(Ec1j, Ic1j, s=10, c='r')
-            # plt.xlabel('Applied potential/V')
-            # plt.ylabel('Current/A')
-            # # plt.ylim(-2e-5,2e-5)
-            # plt.title(name)
-            # plt.grid()
-            # plt.show()
+
 
         return (Ef1, DelE01, Ea1, Ec1, Ia1, Ic1, Ic1, Scan_Rate1)
 
@@ -962,8 +950,8 @@ class CV(BaseModule):
             plt.scatter(top_x1, top_y1, s=10, c='r')
             plt.scatter(bottom_x1, bottom_y1, s=10, c='r')
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
+        plt.xlabel('$Applied potential\,(E)\,/\,V$')
+        plt.ylabel('$Current\,(I)\,/\,A$')
         # plt.ylim(-2e-5,2e-5)
         # plt.grid()
         # plt.show()
@@ -1013,8 +1001,8 @@ class CV(BaseModule):
             plt.scatter(Ea1, Ia1, s=10, c='r')
             plt.scatter(Ec1, Ic1, s=10, c='r')
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
+        plt.xlabel('$Applied potential\,(E)\,/\,V$')
+        plt.ylabel('$Current\,(I)\,/\,A$')
         # plt.ylim(-2e-5,2e-5)
         # plt.grid()
         # plt.show()
@@ -1239,8 +1227,8 @@ class CV(BaseModule):
                 plt.scatter(plt_data_Ea, plt_data_Ia, s=10, c='r')
                 plt.scatter(plt_data_Ec, plt_data_Ic, s=10, c='r')
 
-            plt.xlabel('Applied potential/V')
-            plt.ylabel('Current/A')
+            plt.xlabel('$Applied potential\,(E)\,/\,V$')
+            plt.ylabel('$Current\,(I)\,/\,A$')
             plt.legend()
             # plt.show()
             to_file1 = os.path.join(self.datapath, "CV_step2_p1.png")
@@ -1278,8 +1266,8 @@ class CV(BaseModule):
                     plt.scatter(top_x, top_y, s=20, c='r')
                     plt.scatter(bottom_x, bottom_y, s=20, c='r')
 
-            plt.xlabel('Applied potential/V')
-            plt.ylabel('Current/A')
+            plt.xlabel('$Applied potential\,(E)\,/\,V$')
+            plt.ylabel('$Current\,(I)\,/\,A$')
             # plt.show()
             to_file2 = os.path.join(self.datapath, "CV_step2_p2.png")
             plt.savefig(to_file2)
@@ -1678,8 +1666,8 @@ class CV(BaseModule):
 
                 # Create a figure with dual y-axes
                 fig, ax1 = plt.subplots()
-                ax1.set_xlabel('Applied Potential [V]')
-                ax1.set_ylabel('Current density [A/cm^2]', color=colors[0])
+                ax1.set_xlabel('$Applied potential\,(E)\,/\,V$')
+                ax1.set_ylabel('$Current\,(I)\,/\,A$')
                 ax1.scatter(upperU, smoothed_upperJ, s=1, color=colors[0])
                 ax1.tick_params(axis='y', labelcolor=colors[0])
 
@@ -1753,8 +1741,8 @@ class CV(BaseModule):
 
                 # Create a figure with dual y-axes
                 fig, ax1 = plt.subplots()
-                ax1.set_xlabel('Applied Potential [V]')
-                ax1.set_ylabel('Current density [A/cm^2]', color=colors[0])
+                ax1.set_xlabel('$Applied potential\,(E)\,/\,V$')
+                ax1.set_ylabel('$Current\,(I)\,/\,A$')
                 ax1.scatter(upperU, smoothed_upperI, s=1, color=colors[0])
                 ax1.tick_params(axis='y', labelcolor=colors[0])
 

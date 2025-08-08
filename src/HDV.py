@@ -366,10 +366,11 @@ class HDV(BaseModule):
             # Plot the regression line
             plt.plot(x_regression, y_regression, label=f'{potential:.2f}V')
 
-        plt.xlabel('$[Rotation Rate/(Rad/s)]^{1/2}$')
-        plt.ylabel('Limit current/A')
+        plt.xlabel(r'$[Rotation\ Rate\ (\omega)\ /\ \mathrm{rad\cdot s}^{-1}]^{1/2}$')
+        plt.ylabel(r'$Limit current\ (I_{\mathrm{lim}})\ /\ \mathrm{A}$')
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        plt.legend(loc='lower left')
+        plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
+
         # plt.grid()
         to_file1 = os.path.join(self.datapath, "HDV_step2_1_p1.png")
         plt.savefig(to_file1)
@@ -655,10 +656,11 @@ class HDV(BaseModule):
             # Plot the regression line
             plt.plot(x_regression, y_regression, label=f'{potential:.2f}V')
 
-        plt.xlabel('$[Rotation Rate/(Rad/s)]^{-1/2}$')
-        plt.ylabel('$[measured current/A]^{-1}$')
-        plt.yscale('log')
-        plt.legend(loc='upper left')
+        plt.xlabel(r'$[Rotation\ Rate\ (\omega)\ /\ \mathrm{rad\cdot s}^{-1}]^{1/2}$')
+        plt.ylabel(r'$Limit current\ (I_{\mathrm{lim}})\ /\ \mathrm{A}$')
+        plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1), borderaxespad=0.)
+
         # plt.grid()
 
         to_file1 = os.path.join(self.datapath, "HDV_step2_2_p1.png")
@@ -774,8 +776,8 @@ class HDV(BaseModule):
 
         # Scatter plot for the first y-axis
         ax1.scatter(E_plot, KL_slope, s=2, color='#1f77b4')
-        ax1.set_xlabel('Applied potential/V')
-        ax1.set_ylabel('Corresponding Slope B', color='k')
+        ax1.set_xlabel('$Applied\ potential\ (E)\ /\ V$')
+        ax1.set_ylabel('$Corresponding\ Slope\ (B)$', color='k')
         ax1.tick_params(axis='y', labelcolor='#1f77b4')
 
         # Create a second y-axis
@@ -783,8 +785,7 @@ class HDV(BaseModule):
 
         # Scatter plot for the second y-axis
         ax2.scatter(E_plot, D, s=2, color='#ff7f0e')
-        ax2.set_yscale('log')  # Set y-axis to logarithmic scale
-        ax2.set_ylabel('Diffusion coefficient(D)/cm\u00b2/s', color='k')
+        ax2.set_ylabel('$Diffusion\ coefficient\ (\mathrm{D})\ /\ \mathrm{cm\cdot s}^{-1}$', color='k')
         ax2.tick_params(axis='y', labelcolor='#ff7f0e')
 
         # plt.grid()
