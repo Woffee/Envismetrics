@@ -4,7 +4,7 @@ This document describes the required data format and structure for each electroc
 
 ---
 
-## 🌪️ HDV Module (Hydrodynamic Voltammetry / RDE)
+## HDV Module (Hydrodynamic Voltammetry / RDE)
 
 ### ✅ Required Columns
 
@@ -51,7 +51,7 @@ WE(1).Current (A);WE(1).Potential (V)
 
 ---
 
-## 🔁 CV Module (Cyclic Voltammetry)
+## CV Module (Cyclic Voltammetry)
 
 ### ✅ Required Columns
 
@@ -97,7 +97,7 @@ WE(1).Current (A);WE(1).Potential (V);Scan
 
 ---
 
-## ⚗️ CA Module (Chronoamperometry)
+## CA Module (Chronoamperometry)
 
 ### ✅ Required Columns
 
