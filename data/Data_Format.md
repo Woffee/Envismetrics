@@ -78,7 +78,7 @@ Files can be provided in `.xlsx`, `.csv`, or `.txt` format, exported from electr
 WE(1).Current (A);WE(1).Potential (V);Scan  
 -1.07421874999999E-06;0.0021942138671875;1  
 -1.04675292968751E-06;0.0041656494140625;1  
-
+..;..;..
 
 ### ⚠️ Common Issues
 
