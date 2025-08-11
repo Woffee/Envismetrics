@@ -17,7 +17,10 @@ Each uploaded `.xlsx` file must contain the following **case-sensitive** columns
 
 ### 📁 File Format
 
-- Files must be in `.xlsx` format, exported from Autolab/NOVA or equivalent software;
+Files can be provided in `.xlsx`, `.csv`, or `.txt` format, exported from electrochemical workstation software such as NOVA, EC-Lab, or Gamry.  
+
+- `.xlsx` and `.csv` files should contain the required column headers as described below.
+- `.txt` files should be exported in a **tab- or semicolon-delimited** plain text format, with exactly the same column headers and order as `.xlsx`/`.csv` exports.
 - Each file should contain data for **one rotation rate only** (e.g., `800 rpm`);
 - The script will extract `rpm` from the filename using patterns like `800rpm`, `1200rpm`, etc.
 
@@ -25,13 +28,19 @@ Each uploaded `.xlsx` file must contain the following **case-sensitive** columns
 `SampleID_(rpm)rpm_HDV.xlsx`  
 *Example:* `Ni_P_1200rpm_HDV.xlsx`
 
-### 🧪 Example Table
+### Example Table (`.xlsx`, `.csv`)
 
 | WE(1).Current (A) | WE(1).Potential (V) |
 |-------------------|---------------------|
 | -3.78845E-05      | -1.096496582        |
 | -3.79333E-05      | -1.094360352        |
 | -3.74634E-05      | -1.091918945        |
+
+### Example `.txt` file content (semicolon-delimited)
+
+WE(1).Current (A);WE(1).Potential (V)  
+-2.85736083984375E-05;-1.0980224609375  
+-2.8509521484375E-05;-1.09832763671875  
 
 ### ⚠️ Common Issues
 
@@ -100,7 +109,10 @@ Each uploaded `.xlsx` or `.csv` file should contain the following **case-sensiti
 
 ### 📁 File Format
 
-- Files should be in `.xlsx` format, typically exported from NOVA or Autolab software.
+Files can be provided in `.xlsx`, `.csv`, or `.txt` format, exported from electrochemical workstation software such as NOVA, EC-Lab, or Gamry.  
+
+- `.xlsx` and `.csv` files should contain the required column headers as described below.
+- `.txt` files should be exported in a **tab- or semicolon-delimited** plain text format, with exactly the same column headers and order as `.xlsx`/`.csv` exports.
 - File names are expected to contain numeric prefixes for ordering (e.g., `1_DMAB_120s_CA.xlsx`, `2_DMAB_120s_CA.xlsx`, etc.).
 - The numeric portion of the filename is used for indexing and analysis.
 
@@ -108,13 +120,20 @@ Each uploaded `.xlsx` or `.csv` file should contain the following **case-sensiti
 `X_description_duration_CA.xlsx`  
 *Example:* `2_DMAB_120s_CA.xlsx`
 
-### 🧪 Example Table
+### Example Table (`.xlsx`, `.csv`)
 
 | Time (s) | WE(1).Current (A) | WE(1).Potential (V) |
 |----------|-------------------|----------------------|
 | 0.000    | -1.23E-07         | -0.300               |
 | 0.001    | -1.22E-07         | -0.300               |
 | 0.002    | -1.25E-07         | -0.300               |
+
+### Example `.txt` file content (semicolon-delimited)
+
+Time (s);WE(1).Potential (V);WE(1).Current (A)  
+141.739972642141;0.207763671875;9.38629150390625E-05  
+141.749972642116;0.2099609375;0.000107879638671875  
+141.75997264209;0.2099609375;8.740234375E-05  
 
 ### ⚠️ Common Issues
 
