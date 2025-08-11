@@ -1,6 +1,8 @@
-# 📁 Data Format Instructions for Envismetrics
+# 📁 Data Format Instructions for Envismetrics  
+*(Example shown using Autolab NOVA export format)*
 
-This document describes the required data format and structure for each electrochemical module used in Envismetrics. Please ensure your input files follow the specifications below to avoid upload or parsing issues.
+This document describes the required data format and structure for each electrochemical module in **Envismetrics**.  
+Please ensure your input files follow the specifications below to avoid upload or parsing issues.
 
 ---
 
