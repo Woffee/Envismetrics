@@ -54,7 +54,10 @@ Each uploaded `.xlsx` or `.csv` file must contain the following **case-sensitive
 
 ### 📁 File Format
 
-- Files should be in `.xlsx` or `.csv` format, exported from electrochemical workstation software such as NOVA, EC-Lab, or Gamry.
+Files can be provided in `.xlsx`, `.csv`, or `.txt` format, exported from electrochemical workstation software such as NOVA, EC-Lab, or Gamry.  
+
+- `.xlsx` and `.csv` files should contain the required column headers as described below.
+- `.txt` files should be exported in a **tab- or semicolon-delimited** plain text format, with exactly the same column headers and order as `.xlsx`/`.csv` exports.
 - Data should contain at least one complete CV cycle. Multiple cycles can be distinguished by the `Scan` column.
 - The script will attempt to automatically extract the scan rate from the filename using patterns like `10mVs`, `200mVs`, etc. (if not found, analysis may be skipped or mislabelled).
 
@@ -62,13 +65,19 @@ Each uploaded `.xlsx` or `.csv` file must contain the following **case-sensitive
 `SampleID_(scanrate)mVs_CV.xlsx`  
 *Example:* `GC_K3FeCN6_200mVs_CV.xlsx`
 
-### 🧪 Example Table
+### Example Table (`.xlsx`, `.csv`)
 
 | WE(1).Current (A) | WE(1).Potential (V) | Scan |
-|-------------------|----------------------|------|
+|-------------------|---------------------|------|
 | -9.75647E-06      | 0.002682495          | 1    |
 | -9.54285E-06      | 0.005136108          | 1    |
 | ...               | ...                  | ...  |
+
+### Example `.txt` file content (semicolon-delimited)
+
+WE(1).Current (A);WE(1).Potential (V);Scan
+-1.07421874999999E-06;0.0021942138671875;1
+-1.04675292968751E-06;0.0041656494140625;1
 
 ### ⚠️ Common Issues
 
