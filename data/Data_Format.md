@@ -111,10 +111,9 @@ Each uploaded `.xlsx` or `.csv` file should contain the following **case-sensiti
 
 Files can be provided in `.xlsx`, `.csv`, or `.txt` format, exported from electrochemical workstation software such as NOVA, EC-Lab, or Gamry.  
 
-- `.xlsx` and `.csv` files should contain the required column headers as described below.
-- `.txt` files should be exported in a **tab- or semicolon-delimited** plain text format, with exactly the same column headers and order as `.xlsx`/`.csv` exports.
-- File names are expected to contain numeric prefixes for ordering (e.g., `1_DMAB_120s_CA.xlsx`, `2_DMAB_120s_CA.xlsx`, etc.).
-- The numeric portion of the filename is used for indexing and analysis.
+- `.xlsx` and `.csv` files should contain the required column headers as described below.  
+- `.txt` files should be exported in a **tab- or semicolon-delimited** plain text format, with exactly the same column headers and order as `.xlsx`/`.csv` exports.  
+- Upload **one experiment at a time**. Do not upload multiple experiment datasets together, as this will cause overlapping in figures.
 
 **Recommended naming pattern:**  
 `X_description_duration_CA.xlsx`  
