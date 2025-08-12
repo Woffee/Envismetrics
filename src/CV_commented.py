@@ -1336,154 +1336,154 @@ class CV(BaseModule):
             formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
             print("Done:", formatted_time)
 
-    def show_info(peak_info, n=5):
-        """
-        Display the first n values from each list in the peak_info dictionary.
-        
-        Useful for debugging peak extraction results by printing the length 
-        and head of each result list.
+            def show_info(peak_info, n=5):
+                """
+                Display the first n values from each list in the peak_info dictionary.
 
-        Parameters:
-            peak_info (dict): Dictionary containing lists of extracted peak parameters.
-            n (int): Number of values to show from each list (default: 5).
-        """
-        for key, values in peak_info.items():
-            display_length = min(len(values), n)
-            print(f'{key}: {[len(values)]} {values[:display_length]}')
+                Useful for debugging peak extraction results by printing the length
+                and head of each result list.
 
-
-    # Print summary of peak search results
-    show_info(peak_info)
+                Parameters:
+                    peak_info (dict): Dictionary containing lists of extracted peak parameters.
+                    n (int): Number of values to show from each list (default: 5).
+                """
+                for key, values in peak_info.items():
+                    display_length = min(len(values), n)
+                    print(f'{key}: {[len(values)]} {values[:display_length]}')
 
 
-    # Compute and display the mean value of Ef for each peak range
-    mean_Ef = {}
-    for i in range(len(peak_range_ox)):
-        Ef = np.mean(peak_info[f'Ef{i}'])
-        mean_Ef[f'Ef{i + 1}'] = Ef
-
-    for key, value in mean_Ef.items():
-        print(f"{key}: {value}")
+            # Print summary of peak search results
+            show_info(peak_info)
 
 
-    # === Visualization: Plot all peak positions on full CV traces ===
+            # Compute and display the mean value of Ef for each peak range
+            mean_Ef = {}
+            for i in range(len(peak_range_ox)):
+                Ef = np.mean(peak_info[f'Ef{i}'])
+                mean_Ef[f'Ef{i + 1}'] = Ef
 
-    plt.figure()
-    for data_i in data_list:
-        df = myglobals[data_i]  # Access stored DataFrame from memory
-        print(data_i)
-        U = df['WE(1).Potential (V)']
-        I = df['WE(1).Current (A)']
-        scan_rate = Search_scan_rate(data_i)
-        plt.scatter(U, I, label=f'{scan_rate} mV', s=1, c='#1f77b4')  # Raw CV traces
-
-    # Overlay peak markers on full CV data
-    for i in range(len(peak_range_ox)):
-        Ea = peak_info[f'Ea{i}']
-        Ec = peak_info[f'Ec{i}']
-        Ia = peak_info[f'Ia{i}']
-        Ic = peak_info[f'Ic{i}']
-        plt.scatter(Ea, Ia, s=10, c='r')  # Oxidation peaks
-        plt.scatter(Ec, Ic, s=10, c='r')  # Reduction peaks
-
-    plt.xlabel('Applied potential/V')
-    plt.ylabel('Current/A')
-    plt.legend()
-    to_file1 = os.path.join(self.datapath, "CV_step2_p1.png")
-    plt.savefig(to_file1)
-    plt.close()
+            for key, value in mean_Ef.items():
+                print(f"{key}: {value}")
 
 
-    # === Visualization: Plot selected cycle of example scan with peaks ===
+            # === Visualization: Plot all peak positions on full CV traces ===
 
-    search_key = str(example_scan_rate) + "mV"
-    matching_data = [name for name in data_list if search_key in name]
-    plt.figure()
+            plt.figure()
+            for data_i in data_list:
+                df = myglobals[data_i]  # Access stored DataFrame from memory
+                print(data_i)
+                U = df['WE(1).Potential (V)']
+                I = df['WE(1).Current (A)']
+                scan_rate = Search_scan_rate(data_i)
+                plt.scatter(U, I, label=f'{scan_rate} mV', s=1, c='#1f77b4')  # Raw CV traces
 
-    if matching_data:
-        df = myglobals[matching_data[0]]
-        df = df[df['Scan'] == int(example_cycle)]
+            # Overlay peak markers on full CV data
+            for i in range(len(peak_range_ox)):
+                Ea = peak_info[f'Ea{i}']
+                Ec = peak_info[f'Ec{i}']
+                Ia = peak_info[f'Ia{i}']
+                Ic = peak_info[f'Ic{i}']
+                plt.scatter(Ea, Ia, s=10, c='r')  # Oxidation peaks
+                plt.scatter(Ec, Ic, s=10, c='r')  # Reduction peaks
 
-        U = df['WE(1).Potential (V)']
-        I = df['WE(1).Current (A)']
-        upperU, lowerU, upperI, lowerI = separater(U, I, min(U), max(U))
-
-        # Apply optional smoothing
-        if apply_gaussian_filter:
-            smoothed_upperI = gaussian_filter(upperI, sigma=1)
-            smoothed_lowerI = gaussian_filter(lowerI, sigma=1)
-        else:
-            smoothed_upperI = upperI
-            smoothed_lowerI = lowerI
-
-        # Plot CV segment
-        plt.scatter(upperU, smoothed_upperI, s=1, c='#1f77b4')
-        plt.scatter(lowerU, smoothed_lowerI, s=1, c='#ff7f0e')
-
-        # Highlight extracted peaks
-        for z in range(len(peak_range_ox)):
-            top_x, top_y = find_max(upperU, smoothed_upperI, peak_range_ox[z][0], peak_range_ox[z][1])
-            bottom_x, bottom_y = find_min(lowerU, smoothed_lowerI, peak_range_re[z][0], peak_range_re[z][1])
-            plt.scatter(top_x, top_y, s=20, c='r')
-            plt.scatter(bottom_x, bottom_y, s=20, c='r')
-
-    plt.xlabel('Applied potential/V')
-    plt.ylabel('Current/A')
-    to_file2 = os.path.join(self.datapath, "CV_step2_p2.png")
-    plt.savefig(to_file2)
-    plt.close()
+            plt.xlabel('Applied potential/V')
+            plt.ylabel('Current/A')
+            plt.legend()
+            to_file1 = os.path.join(self.datapath, "CV_step2_p1.png")
+            plt.savefig(to_file1)
+            plt.close()
 
 
-    # === Save temporary analysis results to a .pkl file ===
-    tmp_res_filename = "form2_res.pkl"
-    tmp_res = {
-        'peak_range_ox': peak_range_ox,
-        'peak_info': peak_info,
-        'data_list': data_list,
-        'globals': myglobals,
-    }
-    self.pkl_save(tmp_res, tmp_res_filename)
+            # === Visualization: Plot selected cycle of example scan with peaks ===
 
-    except Exception as e:
-        status_msg = str(e)
+            search_key = str(example_scan_rate) + "mV"
+            matching_data = [name for name in data_list if search_key in name]
+            plt.figure()
+
+            if matching_data:
+                df = myglobals[matching_data[0]]
+                df = df[df['Scan'] == int(example_cycle)]
+
+                U = df['WE(1).Potential (V)']
+                I = df['WE(1).Current (A)']
+                upperU, lowerU, upperI, lowerI = separater(U, I, min(U), max(U))
+
+                # Apply optional smoothing
+                if apply_gaussian_filter:
+                    smoothed_upperI = gaussian_filter(upperI, sigma=1)
+                    smoothed_lowerI = gaussian_filter(lowerI, sigma=1)
+                else:
+                    smoothed_upperI = upperI
+                    smoothed_lowerI = lowerI
+
+                # Plot CV segment
+                plt.scatter(upperU, smoothed_upperI, s=1, c='#1f77b4')
+                plt.scatter(lowerU, smoothed_lowerI, s=1, c='#ff7f0e')
+
+                # Highlight extracted peaks
+                for z in range(len(peak_range_ox)):
+                    top_x, top_y = find_max(upperU, smoothed_upperI, peak_range_ox[z][0], peak_range_ox[z][1])
+                    bottom_x, bottom_y = find_min(lowerU, smoothed_lowerI, peak_range_re[z][0], peak_range_re[z][1])
+                    plt.scatter(top_x, top_y, s=20, c='r')
+                    plt.scatter(bottom_x, bottom_y, s=20, c='r')
+
+            plt.xlabel('Applied potential/V')
+            plt.ylabel('Current/A')
+            to_file2 = os.path.join(self.datapath, "CV_step2_p2.png")
+            plt.savefig(to_file2)
+            plt.close()
 
 
-    # === Save final results into result JSON ===
-
-    data = self.res_data
-    if 'CV' not in data.keys():
-        data['CV'] = {}
-
-    if status_msg == '':
-        data['CV']['form2'] = {
-            'status': 'done',
-            'input': all_params,
-            'output': {
-                'img1': to_file1.split('/')[-1],
-                'img2': to_file2.split('/')[-1],
+            # === Save temporary analysis results to a .pkl file ===
+            tmp_res_filename = "form2_res.pkl"
+            tmp_res = {
+                'peak_range_ox': peak_range_ox,
+                'peak_info': peak_info,
+                'data_list': data_list,
+                'globals': myglobals,
             }
-        }
-        self.save_result_data(data)
+            self.pkl_save(tmp_res, tmp_res_filename)
 
-        return {
-            'status': True,
-            'version': self.version,
-            'message': 'Success',
-            'data': data
-        }
-    else:
-        data['CV']['form2'] = {
-            'status': status_msg,
-            'input': all_params,
-        }
-        self.save_result_data(data)
+        except Exception as e:
+            status_msg = str(e)
 
-        return {
-            'status': False,
-            'version': self.version,
-            'message': status_msg,
-            'data': data
-        }
+
+        # === Save final results into result JSON ===
+
+        data = self.res_data
+        if 'CV' not in data.keys():
+            data['CV'] = {}
+
+        if status_msg == '':
+            data['CV']['form2'] = {
+                'status': 'done',
+                'input': all_params,
+                'output': {
+                    'img1': to_file1.split('/')[-1],
+                    'img2': to_file2.split('/')[-1],
+                }
+            }
+            self.save_result_data(data)
+
+            return {
+                'status': True,
+                'version': self.version,
+                'message': 'Success',
+                'data': data
+            }
+        else:
+            data['CV']['form2'] = {
+                'status': status_msg,
+                'input': all_params,
+            }
+            self.save_result_data(data)
+
+            return {
+                'status': False,
+                'version': self.version,
+                'message': status_msg,
+                'data': data
+            }
 
     def start3(self, all_params):
         """
