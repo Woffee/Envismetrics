@@ -344,44 +344,6 @@ def make_color_darker(color, factor):
     return f'#{r:02x}{g:02x}{b:02x}'
 
 
-def extract_rpm(filename):
-    """
-    Extract the 'rpm' value from filename (e.g., '800rpm.csv').
-
-    Parameters:
-        filename (str): Input filename.
-
-    Returns:
-        str or None: Extracted rpm string (e.g., '800rpm'), or None if not found.
-    """
-    # Match a group of digits followed by 'rpm', preceded by start or underscore
-    # and followed by a dot (i.e., file extension)
-    pattern = r'(?:^|_)(\d+rpm)\.'
-
-    match = re.search(pattern, filename)
-
-    # Return the matched rpm value if found; otherwise return None
-    return match.group(1) if match else None
-
-
-def extract_mvs(filename):
-    """
-    Extract the scan rate from filenames ending with '_CV.csv'.
-
-    Parameters:
-        filename (str): Input filename (e.g., 'sample_20mVs_CV.csv').
-
-    Returns:
-        str or None: Extracted scan rate string (e.g., '20mVs'), or None if not matched.
-    """
-    # Match digits followed by 'mVs' that appear before '_CV.' in filename
-    # Designed specifically for filenames exported in Envismetrics CV module
-    pattern = r'(?:^|_)(\d+mVs)_CV\.'
-    match = re.search(pattern, filename)
-
-    # Return matched scan rate string (e.g., '20mVs') if found
-    return match.group(1) if match else None
-
 
 def check_files(files):
     """

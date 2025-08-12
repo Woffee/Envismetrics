@@ -3,19 +3,19 @@ let filesArray = [];
 // 👇 各模块的正则表达式、错误信息、示例
 const moduleConfig = {
     CA: {
-        pattern: /^\d+_.*_CA$/i,
-        reason: " The filename must start with a number and end with '_CA'",
-        example: "Example: 1_sample_CA.xlsx"
+        pattern: /^\d+_.*/i,
+        reason: "The filename must start with a number",
+        example: "Example: 1_sample.xlsx"
     },
     CV: {
-        pattern: /^.*\d+mVs_CV$/i,
-        reason: "The filename must include scan rate (e.g., '100mVs') and end with '_CV'",
-        example: "Example: NiFoam_100mVs_CV.xlsx"
+        pattern: /^.*\d+mVs/i,
+        reason: "The filename must include scan rate (e.g., '100mVs')",
+        example: "Example: NiFoam_100mVs.xlsx"
     },
     HDV: {
-        pattern: /^.*\d+rpm_HDV$/i,
-        reason: "The filename must include rotation speed (e.g., '800rpm') and end with '_HDV'",
-        example: "Example: Ni_P_800rpm_HDV.xlsx"
+        pattern: /^.*\d+rpm/i,
+        reason: "The filename must include rotation speed (e.g., '800rpm')",
+        example: "Example: Ni_P_800rpm.xlsx"
     }
 };
 

@@ -3,7 +3,7 @@ import os
 import json
 import pandas as pd
 from unittest.mock import patch, MagicMock
-from src.CV import CV, Search_scan_rate, extract_mvs, extract_rpm
+from src.CV import CV, Search_scan_rate
 
 
 def test_search_scan_rate_valid():
@@ -12,20 +12,6 @@ def test_search_scan_rate_valid():
 
 def test_search_scan_rate_invalid():
     assert Search_scan_rate("file_without_scanrate.csv") == -1
-
-
-def test_extract_mvs_valid():
-    assert extract_mvs("data_20mVs_CV.csv") == "20mVs"
-
-def test_extract_mvs_invalid():
-    assert extract_mvs("data.csv") is None
-
-def test_extract_rpm_valid():
-    assert extract_rpm("data_800rpm.csv") == "800rpm"
-
-def test_extract_rpm_invalid():
-    assert extract_rpm("file.txt") is None
-
 
 
 @patch.object(CV, 'read_data')
