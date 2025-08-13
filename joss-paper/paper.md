@@ -157,11 +157,10 @@ In *Envismetrics*, users can select potential values to automatically generate t
 >
 > This diagnostic approach does **not** suggest physical dependence of $D$ on potential, but rather supports informed analysis based on electrochemical theory.
 
-<figure style="width: 50%;">
-  <img src="Image_Set/KL_D23.png" alt="Levich plot module" width="50%" />
-  <figcaption><strong>Figure 2.</strong> Levich plot module.</figcaption>
+<figure style="width: 50%; margin: auto; text-align: center;">
+  <img src="Image_Set/KL_D23.png" alt="Koutecky–Levich plot module" style="width: 100%;" />
+  <figcaption><strong>Figure 2.</strong> Koutecky–Levich plot module.</figcaption>
 </figure>
-
 
 ## Cyclic Voltammetry (CV) Module
 
