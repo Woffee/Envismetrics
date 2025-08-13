@@ -206,7 +206,7 @@ In the implementation, setting \(\sqrt{n^{\prime} + \beta} = 1\) corresponds to 
 
 ### Function 4: Standard Rate Constant Calculation
 
-The standard rate constant, $k_0$, is calculated using a dimensionless kinetic parameter, $\Psi$, which relates $k_0$ to the system’s electrochemical and physical properties. This method is based on the classical Nicholson model and was extended by Lavagnini et al. to cover a broader range of peak separations ($\Delta E_p$) [@nicholson1965theory；@lavagnini2004extended].
+The standard rate constant, $k_0$, is calculated using a dimensionless kinetic parameter, $\Psi$, which relates $k_0$ to the system’s electrochemical and physical properties. This method is based on the classical Nicholson model and was extended by Lavagnini et al. to cover a broader range of peak separations ($\Delta E_p$) [@nicholson1965theory；@lavagnini2004extended；@Klingler1981].
 
 Envismetrics automatically estimates $\Psi$ from the peak-to-peak separation and applies the empirical Lavagnini relationship:
 
