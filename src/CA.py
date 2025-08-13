@@ -187,8 +187,8 @@ class CA(BaseModule):
                         'uploaded_files': [],  # Currently unused
                     },
                     'output': {
-                        'file1': to_file1.split("/")[-1],
-                        'file2': to_file2.split("/")[-1],
+                        'file1': os.path.basename(to_file1),
+                        'file2': os.path.basename(to_file2),
                     }
                 }
 
@@ -340,7 +340,7 @@ class CA(BaseModule):
                 print(j, "Slope:", slope)
                 print(j, "R-squared:", r_squared)
                 print(j, "D:", D)
-                to_files.append([to_file1.split("/")[-1], to_file2.split("/")[-1]])
+                to_files.append([os.path.basename(to_file1), os.path.basename(to_file2)])
 
             # Assemble CSV table
             table = pd.DataFrame([slope_set, D_set, R2_set], index=['slope', 'D', 'R2'])
@@ -366,7 +366,7 @@ class CA(BaseModule):
                 },
                 'output': {
                     'files': to_files,
-                    'csv_file': to_file_csv.split("/")[-1],
+                    'csv_file': os.path.basename(to_file_csv),
                 }
             }
             self.save_result_data(todata)
