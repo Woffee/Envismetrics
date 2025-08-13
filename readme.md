@@ -73,6 +73,14 @@ python -m venv myenv
 myenv\Scripts\activate
 ```
 
+🖥 Windows (PowerShell)
+
+```
+python -m venv myenv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+myenv\Scripts\Activate.ps1
+```
+
 🔰 We recommend keeping the virtual environment inside the local repository for simplicity, especially for beginners. Advanced users may choose a centralized folder for their environments.
 
 Install Required Packages
