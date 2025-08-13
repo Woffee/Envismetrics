@@ -146,18 +146,14 @@ $$
 \frac{1}{i} = \frac{1}{n F A k^0 C} + \frac{1}{0.62\, n F A D^{2/3} \omega^{1/2} \nu^{-1/6} C}
 $$
 
-In *Envismetrics*, users can select potential values to automatically generate these plots, with slopes and derived kinetic parameters $D$ calculated dynamically for each potential. This feature enables users to explore the potential dependence of apparent kinetics and identify plateaus where mass transport dominates. Users should apply Levich/KL analyses only in regions where steady-state limiting currents are observed. *Envismetrics* allows flexible selection of such regions, but interpretation should follow electrochemical theory to avoid applying these models in inappropriate potential windows.
+In *Envismetrics*, users can select potential values to automatically generate these plots, with slopes and derived kinetic parameters \(D\) calculated dynamically for each potential. This feature enables users to explore the potential dependence of apparent kinetics and identify plateaus where mass transport dominates. Users should apply Levich/KL analyses only in regions where steady-state limiting currents are observed. *Envismetrics* allows flexible selection of such regions, but interpretation should follow electrochemical theory to avoid applying these models in inappropriate potential windows. The Koutecky–Levich analysis module is under active development to support the calculation of kinetic parameters, including the standard heterogeneous rate constant (\(k_0\)) and the charge-transfer coefficient (\(\alpha\)).
+
 
 > **Note**: While *Envismetrics* displays diffusion coefficients calculated at multiple potentials, this is **not intended to imply that $D$ varies with potential**. Rather, each $D$ value is obtained by applying the **definitional form** of the Levich equation at a specific potential. In practice, current values — even within the limiting current plateau — often fluctuate slightly due to experimental noise, convection, or surface effects.  
 >
-> By plotting $D$ across a range of potentials, users can:
-> - Visually identify regions where $D$ remains consistent;
-> - Average $D$ values across the plateau for better statistical reliability;
-> - Avoid misinterpretation caused by using a single-point calculation.
->
 > This diagnostic approach does **not** suggest physical dependence of $D$ on potential, but rather supports informed analysis based on electrochemical theory.
 
-<figure style="width: 50%; margin: auto; text-align: center;">
+<figure style="width: 100%; margin: auto; text-align: center;">
   <img src="Image_Set/KL_D23.png" alt="Koutecky–Levich plot module" style="width: 100%;" />
   <figcaption><strong>Figure 2.</strong> Koutecky–Levich plot module (logarithmic scale on the y-axis).</figcaption>
 </figure>
