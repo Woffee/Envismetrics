@@ -112,10 +112,6 @@ To aid in interpreting the equations below, Table 2 summarizes commonly used ele
 
 ## Data Processing
 
-Envismetrics supports commonly used plain-text electrochemical data formats, including .xlsx, .csv, and .txt, exported from potentiostat software such as NOVA (Autolab Metrohm) and CV EC-Lab (BioLogic). Users can directly upload these files to the web-based interface without additional preprocessing, provided the files follow standard export structures. The software automatically parses time, current, and potential data for downstream analysis. File validation is included to help ensure compatibility and inform users of any formatting issues. Support for additional instrument vendors and data formats is actively expanding and documented in the repository.
-
-## Data Processing
-
 Envismetrics supports plain-text electrochemical data formats, including `.xlsx`, `.csv`, and `.txt`, exported from supported potentiostat software. The current release has been validated with files from Autolab’s NOVA and BioLogic’s EC-Lab (for CV analysis), with additional formats planned for future updates as documented in the repository. Users can upload these files directly to the web-based interface without additional preprocessing, provided they follow the standard export structures of the supported software. The software automatically parses time, current, and potential data for downstream analysis, with built-in file name and format validation to ensure compatibility and alert users to formatting issues.
 
 ![Data Import Window: Users can easily drag and drop or select their experimental data for quick and straightforward import.](Image_Set/1.png){ width=80% }
@@ -206,6 +202,8 @@ $$
 I_{\text{peak}} = 0.4463 \sqrt{n^{\prime} + \beta} \ n \ F \ C \ A \sqrt{\frac{n F \nu D}{R T}}
 $$
 
+In the implementation, setting \(\sqrt{n^{\prime} + \beta} = 1\) corresponds to the reversible case. For irreversible cases, \(\sqrt{n^{\prime} + \beta}\) is computed from user-specified \(\alpha\) and \(n'\) values. This design allows the same computational pipeline to handle both cases while preserving explicit parameter control for advanced users.
+
 ### Function 4: Standard Rate Constant Calculation
 
 The standard rate constant, $k_0$, is calculated using a dimensionless kinetic parameter, $\Psi$, which relates $k_0$ to the system’s electrochemical and physical properties. This method is based on the classical Nicholson model and was extended by Lavagnini et al. to cover a broader range of peak separations ($\Delta E_p$) [@nicholson1965theory；@lavagnini2004extended].
@@ -249,13 +247,9 @@ $$
 
 Additionally, a mass-transport corrected version has been proposed and implemented in this module [@LI2018117]. This method has also been applied in other research, including the study of dopamine oxidation at gold electrodes conducted by Bacil and co-workers [@C9CP05527D]. The transfer coefficient is calculated by: 
 
-Function 2: Peak Searching
-
 $$
 -\frac{d\ln \left( \frac{1}{I_a} - \frac{1}{I_{\text{peak}}} \right)}{d\theta} = \alpha_a'
 $$
-
-where peak potentials and corresponding peak currents are identified using Function 2: Peak Searching, which applies max value and derivative-based detection algorithms.
 
 <!--
 ![(a) Peak Searching module](Image_Set/CVPS_D.png){ width=45% }
