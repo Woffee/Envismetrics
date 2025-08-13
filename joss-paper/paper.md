@@ -149,8 +149,9 @@ $$
 In *Envismetrics*, users can select potential values to automatically generate these plots, with slopes and derived kinetic parameters $D$ calculated dynamically for each potential. This feature enables users to explore the potential dependence of apparent kinetics and identify plateaus where mass transport dominates. Users should apply Levich/KL analyses only in regions where steady-state limiting currents are observed. *Envismetrics* allows flexible selection of such regions, but interpretation should follow electrochemical theory to avoid applying these models in inappropriate potential windows. The Koutecky–Levich analysis module is under active development to support the calculation of kinetic parameters, including the standard heterogeneous rate constant $k_0$ and the charge-transfer coefficient $\alpha$.
 
 
-> **Note**: While *Envismetrics* displays diffusion coefficients calculated at multiple potentials, this is **not intended to imply that $D$ varies with potential**. Rather, each $D$ value is obtained by applying the **definitional form** of the Levich equation at a specific potential. >
-> This diagnostic approach does **not** suggest physical dependence of $D$ on potential, but rather supports informed analysis based on electrochemical theory.
+> **Note**: While *Envismetrics* may display diffusion coefficients calculated at multiple potentials under inappropriate potential range settings, this is **not intended to imply that $D$ varies with potential**. Rather, each $D$ value is obtained by applying the **definitional form** of the Levich equation at that specific potential.
+> 
+> Users are advised to select only steady-state plateau potentials for quantitative Levich and Koutecky–Levich analysis.
 
 <figure style="width: 100%; margin: auto; text-align: center;">
   <img src="Image_Set/KL_D23.png" alt="Koutecky–Levich plot module" style="width: 100%;" />
