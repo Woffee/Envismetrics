@@ -392,8 +392,8 @@ class HDV(BaseModule):
                 'sigma': sigma,
             },
             'output': {
-                'file1': to_file1.split("/")[-1],
-                'file2': to_file2.split("/")[-1],
+                'file1': os.path.basename(to_file1),
+                'file2': os.path.basename(to_file2),
             }
         }
         self.save_result_data(data)
@@ -743,9 +743,9 @@ class HDV(BaseModule):
             'status': 'done',
             'input': all_params,
             'output': {
-                'file1': to_file1.split("/")[-1],
-                'file2': to_file2.split("/")[-1],
-                'excel_file': excel_file.split("/")[-1],
+                'file1': os.path.basename(to_file1),
+                'file2': os.path.basename(to_file2),
+                'excel_file': os.path.basename(excel_file),
             }
         }
         self.save_result_data(data)
@@ -1080,8 +1080,8 @@ class HDV(BaseModule):
             'status': 'done',
             'input': all_params,
             'output': {
-                'file1': to_file1.split("/")[-1],  # Only save the filename
-                'file2': to_file2.split("/")[-1],
+                'file1': os.path.basename(to_file1),  # Only save the filename
+                'file2': os.path.basename(to_file2),
                 'excel_file': excel_file if excel_file.startswith("/") else '/' + excel_file,
             }
         }

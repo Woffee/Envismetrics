@@ -915,9 +915,9 @@ class CV(BaseModule):
                 'input': all_params,
                 'output': {
                     'mVs_list_str': mVs_list_str,
-                    'file1': to_file1.split("/")[-1],
-                    'file2': to_file2.split("/")[-1],
-                    'file3': to_file3.split("/")[-1],
+                    'file1': os.path.basename(to_file1),
+                    'file2': os.path.basename(to_file2),
+                    'file3': os.path.basename(to_file3),
                 }
             }
             with open(data_file, 'w') as f:
@@ -1421,8 +1421,8 @@ class CV(BaseModule):
                 'status': 'done',
                 'input': all_params,
                 'output': {
-                    'img1': to_file1.split('/')[-1],
-                    'img2': to_file2.split('/')[-1],
+                    'img1': os.path.basename(to_file1),
+                    'img2': os.path.basename(to_file2),
                 }
             }
             self.save_result_data(data)
@@ -1552,7 +1552,7 @@ class CV(BaseModule):
                 'status': 'done',
                 'input': all_params,
                 'output': {
-                    'img1': to_file1.split('/')[-1],
+                    'img1': os.path.basename(to_file1),
                 }
             }
             self.save_result_data(data)
@@ -1676,7 +1676,7 @@ class CV(BaseModule):
             data['CV']['form3'] = {
                 'status': 'done',
                 'input': all_params,
-                'output': {'img1': to_file1.split('/')[-1]},
+                'output': {'img1': os.path.basename(to_file1)},
             }
             self.save_result_data(data)
             return {'status': True, 'version': self.version, 'message': 'Success', 'data': data}
@@ -1777,8 +1777,8 @@ class CV(BaseModule):
                 plt.close()
 
                 res.append({
-                    'img1': img_path1.split('/')[-1],
-                    'img2': img_path2.split('/')[-1],
+                    'img1': os.path.basename(img_path1),
+                    'img2': os.path.basename(img_path2),
                     'slope': slope,
                 })
 
