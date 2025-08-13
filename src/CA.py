@@ -352,6 +352,7 @@ class CA(BaseModule):
 
         except Exception as e:
             status_msg = str(e)
+            D_set = []
 
         # Update result JSON
         todata = self.res_data
@@ -366,6 +367,7 @@ class CA(BaseModule):
                 },
                 'output': {
                     'files': to_files,
+                    'D_set': D_set,
                     'csv_file': os.path.basename(to_file_csv),
                 }
             }

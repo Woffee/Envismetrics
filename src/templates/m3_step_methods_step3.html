@@ -48,7 +48,7 @@
             <h4 class="mb-3">Results</h4>
 
             {% for row in data['form2']['output']['files'] %}
-            <h6 class="">Interval {{ loop.index }}: </h6>
+            <h6 class="">Interval {{ loop.index }}, D: {{ data['form2']['output']['D_set'][ loop.index - 1 ] }} </h6>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col">
                     <div class="card shadow-sm">

@@ -1082,7 +1082,7 @@ class HDV(BaseModule):
             'output': {
                 'file1': os.path.basename(to_file1),  # Only save the filename
                 'file2': os.path.basename(to_file2),
-                'excel_file': excel_file if excel_file.startswith("/") else '/' + excel_file,
+                'excel_file': os.path.basename(excel_file),
             }
         }
 
