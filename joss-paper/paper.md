@@ -117,7 +117,7 @@ Envismetrics supports plain-text electrochemical data formats (.xlsx, .csv, .txt
 
 Users can upload exported files directly to the web-based interface without manual preprocessing, provided they follow the standard export structures of the supported software. The parser automatically detects key experimental parameters—such as scan rate, rotation speed, time, current, and potential—performs file name and format validation, and alerts users to any compatibility or formatting issues, ensuring smooth integration into the downstream analysis workflow.
 
-![Data Import Window: Users can easily drag and drop or select their experimental data for quick and straightforward import.](Image_Set/1.png){ width=80% }
+![**Figure 1.** Data Import Window: Users can easily drag and drop or select their experimental data for quick and straightforward import.](Image_Set/1.png){ width=50% }
 
 ## Hydrodynamic Voltammetry (HDV) - Rotating Disc Electrode (RDE) Module
 
