@@ -154,11 +154,9 @@ $$
 In *Envismetrics*, users can select potential values to automatically generate these plots, with slopes and derived kinetic parameters $D$ calculated dynamically for each potential. This feature enables users to explore the potential dependence of apparent kinetics and identify plateaus where mass transport dominates. Users should apply Levich/KL analyses only in regions where steady-state limiting currents are observed. *Envismetrics* allows flexible selection of such regions, but interpretation should follow electrochemical theory to avoid applying these models in inappropriate potential windows. The Koutecky–Levich analysis module is under active development to support the calculation of kinetic parameters, including the standard heterogeneous rate constant $k_0$ and the charge-transfer coefficient $\alpha$.
 
 > **Important Note:** These models are only valid in the steady-state limiting-current region. Values of $D$ shown at other potentials **do not indicate a physical change in diffusion coefficient**, but simply reflect the **definitional form** of the equations applied at that potential. Users should select only plateau potentials for quantitative analysis.
-> 
-<figure style="width: 100%; margin: auto; text-align: center;">
-  <img src="Image_Set/KL_D23.png" alt="Koutecky–Levich plot module" style="width: 100%;" />
-  <figcaption><strong>Figure 2.</strong> Koutecky–Levich plot module (logarithmic scale on the y-axis).</figcaption>
-</figure>
+>
+
+![**Figure 2.** Koutecký–Levich plot module (logarithmic scale on the y-axis).](Image_Set/KL_D23.png){ width=80% }
 
 ## Cyclic Voltammetry (CV) Module
 
@@ -244,21 +242,11 @@ $$
 ![Example of figures in Envismetrics(CV Module): (a) Peak Searching module, (b) Randles–Ševčík Analysis Module.]
 -->
 
-<div style="display: flex; gap: 10px;">
-  <figure style="width: 49%;">
-    <img src="Image_Set/CVPS_D.png" alt="(a) Peak searching module (CV-2)">
-    <figcaption><strong>(a)</strong> Peak searching module (CV-2)</figcaption>
-  </figure>
-  <figure style="width: 49%;">
-    <img src="Image_Set/RC_DMAB.png" alt="(b) Randles–Ševčík analysis module (CV-3)">
-    <figcaption><strong>(b)</strong> Randles–Ševčík analysis module (CV-3)</figcaption>
-  </figure>
-</div>
+| ![**(a)** Peak searching module (CV-2)](Image_Set/CVPS_D.png){ width=48% } | ![**(b)** Randles–Ševčík analysis module (CV-3)](Image_Set/RC_DMAB.png){ width=48% } |
+|:--:|:--:|
+| (a) Peak searching module (CV-2) | (b) Randles–Ševčík analysis module (CV-3) |
 
-<figcaption style="width: 100%; text-align: center; margin-top: 10px;">
-  <strong>Figure 3.</strong> Visual outputs from the CV module: (a) Peak searching module (CV-2), (b) Randles–Ševčík analysis module (CV-3; conceptual output shown here, available in local version but not yet on the online platform).
-</figcaption>
-
+**Figure 3.** Visual outputs from the CV module: (a) Peak searching module (CV-2), (b) Randles–Ševčík analysis module (CV-3; conceptual output shown here, available in local version but not yet on the online platform).
 
 ## Step Techniques Structure: CA Module
 
@@ -276,27 +264,11 @@ $$
 
 In *Envismetrics*, users can input experimental parameters such as the fitting interval (number of the input files), $n$, $A$, and $C_0$. The software then plots $i(t)$ vs. $\sqrt{nFAC/\pi t}$ and performs linear regression to determine $D$. The outputs include both a regression figure and a summary table of calculated diffusion coefficients.
 
-<!--
-![(a) Plotting and Gaussian Filtering I vs t](Image_Set/CAIt_D.png){ width=45% }
-![(b) Diffusion coefficient regression section](Image_Set/CAp2_D.png){ width=45% }
+| ![**(a)** Current–time curve plotting module (CA-1)](Image_Set/CAIt_D.png){ width=48% } | ![**(b)** Diffusion coefficient regression module (CA-2)](Image_Set/CAp2_D.png){ width=48% } |
+|:--:|:--:|
+| (a) Current–time curve plotting module (CA-1) | (b) Diffusion coefficient regression module (CA-2) |
 
-![Example of figures in Envismetrics(CA Module): (a) , (b).]
--->
-
-<div style="display: flex; gap: 10px;">
-  <figure style="width: 49%;">
-    <img src="Image_Set/CAIt_D.png" alt="(a) Current-time curve plotting (CA-1)">
-    <figcaption><strong>(a)</strong> Current–time curve plotting module (CA-1)</figcaption>
-  </figure>
-  <figure style="width: 49%;">
-    <img src="Image_Set/CAp2_D.png" alt="(b) Diffusion coefficient regression module (CA-2)">
-    <figcaption><strong>(b)</strong> Diffusion coefficient regression module (CA-2)</figcaption>
-  </figure>
-</div>
-
-<figcaption style="width: 100%; text-align: center; margin-top: 10px;">
-  <strong>Figure 4.</strong> Output visualization from the CA module: (a) Current–time curve plotting module (CA-1), (b) Diffusion coefficient regression module based on Cottrell equation (CA-2).
-</figcaption>
+**Figure 4.** Output visualization from the CA module: (a) Current–time curve plotting module (CA-1), (b) Diffusion coefficient regression module based on Cottrell equation (CA-2).
 
 ## Applications in Research
 
