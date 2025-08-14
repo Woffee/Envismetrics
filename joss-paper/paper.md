@@ -182,34 +182,28 @@ $$
 
 In the implementation, setting \(\sqrt{n^{\prime} + \beta} = 1\) corresponds to the reversible case. For irreversible cases, \(\sqrt{n^{\prime} + \beta}\) is computed from user-specified \(\alpha\) and \(n'\) values. This design allows the same computational pipeline to handle both cases while preserving explicit parameter control for advanced users.
 
-### Function 4: Standard Rate Constant Calculation
+### Function 4: Standard Rate Constant Calculation (Advanced)
 
-The standard rate constant, $k_0$, is calculated using a dimensionless kinetic parameter, $\Psi$, which relates $k_0$ to the system’s electrochemical and physical properties. This method is based on the classical Nicholson model and was extended by Lavagnini et al. to cover a broader range of peak separations ($\Delta E_p$) [@nicholson1965theory；@lavagnini2004extended；@Klingler1981].
+Function 4 implements an advanced, optional method for estimating the standard heterogeneous rate constant, $k_0$, using a dimensionless kinetic parameter $\Psi$ that relates $k_0$ to the system’s electrochemical and physical properties. This approach is based on the classical Nicholson model [@nicholson1965theory] and extended by Lavagnini *et al.* [@lavagnini2004extended] to cover a broader range of peak separations $\Delta E_p$, with additional support for the Klingler–Kochi formulation [@Klingler1981] in highly irreversible systems.
 
-Envismetrics automatically estimates $\Psi$ from the peak-to-peak separation and applies the empirical Lavagnini relationship:
+$\Psi$ is estimated from the peak-to-peak separation using the empirical Lavagnini relationship:
+\[
+\Psi = \frac{0.6288 + 0.0021 \cdot X}{1 - 0.017 \cdot X}, \quad X = \Delta E_p \cdot n \ \ (\text{in mV})
+\]
+where $X$ is normalized to millivolts to maintain the dimensionless nature of \(\Psi\).
 
-$$
-\Psi = \frac{0.6288 + 0.0021 \cdot X}{1 - 0.017 \cdot X}, \quad X = \Delta E_p \cdot n \quad (\text{in mV})
-$$
+For systems with large $\Delta E_p$ or highly irreversible behavior, the Klingler–Kochi expression is applied:
+\[
+\Psi = \frac{2.18}{\alpha \pi} \exp\left(-\frac{\alpha n \Delta E_p F}{2RT}\right)
+\]
 
-For systems with large ($\Delta E_p$) or highly irreversible behavior, Envismetrics also supports the Klingler–Kochi formulation:
+The standard rate constant is then obtained from:
+\[
+k^0 = \Psi \cdot \left(\frac{D \cdot n \cdot F}{R \cdot T}\right)^{1/2}
+\]
 
-$$
-\Psi = \frac{2.18}{\alpha \pi} \exp \left( - \frac{\alpha n \Delta E_p F}{2RT} \right)
-$$
-
-From $\Psi$, the standard rate constant is then calculated as:
-
-$$
-k^0 = \Psi \cdot \left( \frac{D \cdot n \cdot F}{R \cdot T} \right)^{1/2}
-$$
-
----
-This method assumes that the electrochemical process is diffusion-controlled, with no coupled chemical reactions or adsorption phenomena. It is applicable primarily to well-defined, peak-shaped cyclic voltammograms (CVs) under quasi-reversible or irreversible conditions. The diffusion coefficient $D$ must be known or reliably estimated beforehand. Since the Lavagnini approach is empirical, it performs best when the standard rate constant $k_0$ lies within an intermediate kinetic range—not too fast or too slow. Users should interpret $k_0$ results in accordance with electrochemical theory to avoid misapplication outside valid regimes.
-
-This function allows users to compare kinetic behavior across different systems using consistent theoretical models, while providing flexibility in selecting which method to apply based on the peak separation and system reversibility.
-
-
+**Assumptions and Scope**  
+This method assumes diffusion-controlled electron transfer without coupled chemical reactions or adsorption phenomena, and is most applicable to well-defined, peak-shaped CVs under quasi-reversible or irreversible conditions. The diffusion coefficient $D$ must be known or reliably estimated. Since the Lavagnini approach is empirical, optimal performance is expected when $k_0$ lies within an intermediate kinetic range. Users are advised to interpret $k_0$ results in accordance with electrochemical theory, and to restrict use of this feature to exploratory or comparative analysis rather than routine novice workflows.
 
 ### Function 5: Tafel Analysis Module
 
