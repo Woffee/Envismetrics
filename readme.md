@@ -203,44 +203,68 @@ By following these simple steps, you can efficiently utilize Envismetrics for yo
 <!-- ROADMAP -->
 ## Roadmap
 
-
 ### Hydrodynamic Voltammetry (HDV) Module
+1. **Data Import, Plotting, and Gaussian Filtering**
+   - Import data from supported potentiostats and file formats.
+   - Visualize data sorted by RPM (rotations per minute).
+   - Apply Gaussian filtering with user-defined sigma for noise reduction.
+2. **Levich and Koutecký–Levich Analysis**
+   - **Levich Analysis**: Generate plots and calculate diffusion coefficients from slope.
+   - **Koutecký–Levich Analysis**: Produce plots, perform linear regression, and analyze diffusion coefficients at selected potentials.
 
-1. Data Import, Plotting, and Gaussian Filtering
-    - Data Import: Supports importing data from various potentiostats and file formats.
-    - Plotting: Visualizes the imported data sorted by RPM (rotations per minute).
-    - Gaussian Filtering: Applies a Gaussian filter to smooth the plotted data.
-2. Levich and Koutecky-Levich Analysis
-	- Levich Plot and Analysis:
-		- Generates Levich plots directly from the data.
-		- Calculates the diffusion coefficient from the slope of the plot.
-	- Koutecky-Levich Plot and Analysis:
-		- Produces Koutecky-Levich plots.
-		- Performs linear regression to analyze the diffusion coefficient at various potentials.
+**Planned Features**
+- Automatic detection of limiting current plateaus for improved Levich/KL regression accuracy.
+- Enhanced fitting diagnostics with linearity feedback and outlier detection.
+- Sliding-range selection for potential window fitting.
+
+---
 
 ### Cyclic Voltammetry (CV) Module
+1. **Plotting and Gaussian Filtering**
+   - Plot CV data sorted by rate constant value.
+   - Apply Gaussian filtering with adjustable sigma values.
+2. **Peak Searching**
+   - Identify peaks within defined potential ranges (max/min detection).
+   - Record peak coordinates for downstream analysis.
+3. **Randles–Ševčík Analysis**
+   - Calculate diffusion coefficients from peak current vs. scan rate.
+4. **Standard Rate Constant Calculation**
+   - Estimate $k^0$ using peak separation and Nicholson/Lavagnini models.
+5. **Tafel Analysis**
+   - Determine anodic and cathodic transfer coefficients.
+   - Implement mass-transport correction for improved accuracy.
 
-1. Plotting and Gaussian Filtering
-	- Plotting: Visualizes cyclic voltammetry data sorted by rate constant value.
-	- Gaussian Filtering: Applies a Gaussian filter to smooth the data, with user-defined sigma values.
-2. Peak Searching
-	- Identifies peak points within specific ranges using various methods (max/min, knee/elbow detection).
-	- Records peak information for use in subsequent analyses.
-3. Randles–Ševčík Analysis
-	- Calculates the diffusion coefficient from peak current and scan rate.
-4. Rate Constant Calculation
-	- Calculates the rate constant using peak separation
-5. Tafel Analysis Module
-    - Determines anodic and cathodic transfer coefficients.
-    - Implements mass-transport corrected methods for enhanced accuracy.
+**Planned Features**
+- Fully automated peak detection across voltammetric cycles.
+- Regime diagnostics based on scan-rate normalization (e.g., $i_p$ vs. $\sqrt{v}$) to identify non-planar diffusion behavior.
+- Automatic exclusion of non-conforming voltammograms.
+- Real-time validation of input parameters (e.g., electrode radius, $D$, $C_0$) with warnings for unphysical values.
 
-### Step Techniques Module
+---
 
-1. CA Module
-   - Plotting: Generates plots of applied potential vs. time and corresponding current vs. time.
-   - Gaussian Filtering: Smooths data for clearer visualization, with adjustable sigma values.
-   - Cottrell Equation Plot: Utilizes the Cottrell equation to calculate the diffusion coefficient.
+### Step Techniques Module – Chronoamperometry (CA)
+1. **Plotting and Gaussian Filtering**
+   - Plot applied potential vs. time and current vs. time.
+   - Apply Gaussian smoothing for noise reduction.
+2. **Cottrell Analysis**
+   - Calculate diffusion coefficients using the Cottrell equation.
+   - Display regression plots and tabulated results.
 
+**Planned Features**
+- Additional step techniques beyond CA (e.g., Chronopotentiometry).
+- User-defined fitting intervals with interactive selection.
+
+---
+
+### Global Features
+- Additional filtering options (e.g., Savitzky–Golay) for noisy data preprocessing.
+- Interactive, user-defined fitting regions in regression plots.
+- Export of results and figures in CSV/JSON formats for reproducibility.
+- Early-stage **EIS module** development for impedance spectroscopy integration.
+
+---
+
+**We welcome user feedback and contributions via [GitHub Issues](https://github.com/Woffee/Envismetrics/issues) and Pull Requests.**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
