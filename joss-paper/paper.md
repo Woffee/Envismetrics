@@ -44,15 +44,15 @@ Envismetrics is an open-source, cross-platform Python application designed to as
 
 # Summary
 
-Accurate determination of kinetic parameters and thermodynamic properties from electrochemical data is fundamental for understanding redox reactions used in diverse applications [@SANECKI2003; @wang2020redox; @WILOCH2024144089; @XU20106366]. These values — including diffusion coefficients, standard rate constants, transfer coefficients, and formal potentials — provide mechanistic insight and are commonly used to validate reaction pathways and simulate electrochemical behavior under various conditions [@C9CP05527D].
+Accurate determination of kinetic parameters and thermodynamic properties from electrochemical data is fundamental for understanding redox reactions used in diverse applications [@SANECKI2003; @wang2020; @WILOCH2024; @XU2010]. These values — including diffusion coefficients, standard rate constants, transfer coefficients, and formal potentials — provide mechanistic insight and are commonly used to validate reaction pathways and simulate electrochemical behavior under various conditions [@Bacil2020].
 
-Although literature values exist for some well-studied redox systems, the evaluation of new analytes or experimental conditions typically requires experimental determination. Techniques such as cyclic voltammetry (CV), linear sweep voltammetry using a rotating disk electrode (LSV at RDE, under laminar flow and planar diffusion conditions), and step methods like chronoamperometry (CA) offer quantitative frameworks for extracting these parameters [@bard2022electrochemical].
+Although literature values exist for some well-studied redox systems, the evaluation of new analytes or experimental conditions typically requires experimental determination. Techniques such as cyclic voltammetry (CV), linear sweep voltammetry using a rotating disk electrode (LSV at RDE, under laminar flow and planar diffusion conditions), and step methods like chronoamperometry (CA) offer quantitative frameworks for extracting these parameters [@Bard2022].
 
 Each technique supports specific analyses and is widely adopted in electrochemical research:
 
-- **LSV at RDE**: Levich and Koutecký–Levich analysis [@doi:10.1021/ar50110a004; @treimer2002koutecky],
-- **CV**: Randles–Ševčík plots, standard rate constant estimation, and transfer coefficient analysis [@doi:10.1002/adts.202500346; @LEFTHERIOTIS2007259],
-- **CA**: Cottrell-based diffusion coefficient estimation [@HERATH20084324; @GOMEZ2023143400; @RODRIGUEZLUCAS2025145648].
+- **LSV at RDE**: Levich and Koutecký–Levich analysis [@Bruckenstein1977; @Treimer2002],
+- **CV**: Randles–Ševčík plots, standard rate constant estimation, and transfer coefficient analysis [@ElLatif2025; @Leftheriotis2007],
+- **CA**: Cottrell-based diffusion coefficient estimation [@Herath2008; @Gomez2023; @RodriguezLucas2025].
 
 While these methods are widely accepted, manual analysis can be labor-intensive and prone to inconsistency. To address this, **Envismetrics** is introduced as an open-source, browser-based Python application that automates data processing and analysis workflows for CV, LSV (RDE), and CA. It provides modules for filtering, peak detection, Levich regression, Randles–Ševčík analysis, and chronoamperometric fitting—offering visual outputs and tabulated results. By focusing on automation and reproducibility, Envismetrics lowers the barrier for electrochemical researchers—especially those dealing with large datasets or requiring rapid feedback—while preserving methodological rigor and transparency.
 
@@ -129,7 +129,7 @@ The Gaussian filter operates by convolving the current signal with a Gaussian ke
 
 ### Function 2: Levich and Koutecky–Levich Analysis
 
-Levich and Koutecký–Levich analyses are widely used to study electrochemical reactions under laminar flow convection conditions [@masa2014koutecky]. *Envismetrics* automates these workflows by generating both Levich and KL plots directly from experimental data.
+Levich and Koutecký–Levich analyses are widely used to study electrochemical reactions under laminar flow convection conditions [@Masa2014]. *Envismetrics* automates these workflows by generating both Levich and KL plots directly from experimental data.
 
 **Levich analysis** estimates the diffusion coefficient $D$ under mass-transport-limited conditions, based on:
 
@@ -174,7 +174,7 @@ Peak identification is essential for calculating formal potentials, peak separat
 
 ### Function 3: Randles–Ševčík Analysis
 
-The Randles–Ševčík analysis estimates the diffusion coefficient $D$ from the relationship between peak current and scan rate, and can be applied to both reversible and irreversible electrochemical systems [@zanello2019inorganic]. Peak parameters for this calculation are obtained from **Function 2 (Peak Searching)**.
+The Randles–Ševčík analysis estimates the diffusion coefficient $D$ from the relationship between peak current and scan rate, and can be applied to both reversible and irreversible electrochemical systems [@Gewirth2004]. Peak parameters for this calculation are obtained from **Function 2 (Peak Searching)**.
 
 For a **reversible** redox process, the Randles–Ševčík equation is:  
 
@@ -192,7 +192,7 @@ In *Envismetrics*, setting $\sqrt{n' + \beta} = 1$ yields the reversible case. F
 
 ### Function 4: Standard Rate Constant Calculation (Experimental Method)
 
-Function 4 implements an advanced, optional method for estimating the standard heterogeneous rate constant $k_0$, using a dimensionless kinetic parameter $\Psi$ that relates $k_0$ to the system’s electrochemical and physical properties. This approach is based on the classical Nicholson model and extended by Lavagnini *et al.* to cover a broader range of peak separations ($\Delta E_p$), with additional support for the Klingler–Kochi formulation in highly irreversible systems [@nicholson1965theory; @lavagnini2004extended; @Klingler1981].
+Function 4 implements an advanced, optional method for estimating the standard heterogeneous rate constant $k_0$, using a dimensionless kinetic parameter $\Psi$ that relates $k_0$ to the system’s electrochemical and physical properties. This approach is based on the classical Nicholson model and extended by Lavagnini *et al.* to cover a broader range of peak separations ($\Delta E_p$), with additional support for the Klingler–Kochi formulation in highly irreversible systems [@Nicholson1965; @Lavagnini2004; @Klingler1981].
 
 $$
 \Psi = \frac{0.6288 + 0.0021 \cdot X}{1 - 0.017 \cdot X}, \quad X = \Delta E_p \cdot n \ \ (\text{in mV})
@@ -218,7 +218,7 @@ $$
 
 ### Function 5: Tafel Analysis Module
 
-Tafel analysis is used to determine the anodic ($\alpha_a$) and cathodic ($\alpha_c$) transfer coefficients. The International Union of Pure and Applied Chemistry (IUPAC) formally defines these coefficients as experimentally determined values [@guidelli2014defining]:
+Tafel analysis is used to determine the anodic ($\alpha_a$) and cathodic ($\alpha_c$) transfer coefficients. The International Union of Pure and Applied Chemistry (IUPAC) formally defines these coefficients as experimentally determined values [@Guidelli2014]:
 
 $$
 \alpha_a = \frac{RT}{F} \left( \frac{d \ln j_{a, \text{corr}}}{dE} \right)
@@ -228,13 +228,13 @@ $$
 \alpha_c = -\frac{RT}{F} \left( \frac{d \ln |j_{c, \text{corr}}|}{dE} \right)
 $$
 
-A **mass-transport-corrected** version, proposed by Li *et al.* [@LI2018117], is also implemented in this module. This approach has been applied in other studies, such as dopamine oxidation at gold electrodes by Bacil *et al.* [@C9CP05527D]. The corrected anodic transfer coefficient is calculated as:
+A **mass-transport-corrected** version, proposed by Li *et al.* [@Li2018], is also implemented in this module. This approach has been applied in other studies, such as dopamine oxidation at gold electrodes by Bacil *et al.* [@Bacil2020]. The corrected anodic transfer coefficient is calculated as:
 
 $$
 -\frac{d\ln \left( \frac{1}{I_a} - \frac{1}{I_{\text{peak}}} \right)}{d\theta} = \alpha_a'
 $$
 
-> ⚠ **Usage Note:** The accuracy of Tafel slope and $\alpha$ determination depends strongly on proper baseline correction, mass-transport correction, and the selection of the linear Tafel region.  
+> **Usage Note:** The accuracy of Tafel slope and $\alpha$ determination depends strongly on proper baseline correction, mass-transport correction, and the selection of the linear Tafel region.  
 > Misidentifying the potential range can lead to significant errors in calculated kinetic parameters.
 
 <!--
@@ -300,7 +300,7 @@ In *Envismetrics*, users can input experimental parameters such as the fitting i
 
 ## Applications in Research
 
-Envismetrics has been employed in various research projects, demonstrating its versatility in the analysis of electrochemical systems. For instance, the software was utilized in the investigation of photocatalytic degradation of perfluorooctanoic acid (PFOA), published in *Chemosphere* [@OSONGA2024143057], where it facilitated the precise analysis of kinetic parameters essential to understanding the degradation mechanisms. Additionally, Envismetrics played a key role in mechanistic studies on the electrochemical oxidation of dimethylamine borane (DMAB), as documented in recent works [@Xue_2023,@TORABFAM2025107950]. In these studies, Envismetrics enabled the accurate processing of electrochemical data, which was crucial for validating the proposed mechanisms and deriving key kinetic parameters.
+Envismetrics has been employed in various research projects, demonstrating its versatility in the analysis of electrochemical systems. For instance, the software was utilized in the investigation of photocatalytic degradation of perfluorooctanoic acid (PFOA), published in *Chemosphere* [@Osonga2024], where it facilitated the precise analysis of kinetic parameters essential to understanding the degradation mechanisms. Additionally, Envismetrics played a key role in mechanistic studies on the electrochemical oxidation of dimethylamine borane (DMAB), as documented in recent works [@Torabfam2025]. In these studies, Envismetrics enabled the accurate processing of electrochemical data, which was crucial for validating the proposed mechanisms and deriving key kinetic parameters.
 
 ## Author Contributions (CRediT Taxonomy)
 
