@@ -113,7 +113,9 @@ To aid in interpreting the equations below, Table 2 summarizes commonly used ele
 
 ## Data Processing
 
-Envismetrics supports plain-text electrochemical data formats, including `.xlsx`, `.csv`, and `.txt`, exported from supported potentiostat software. The current release has been validated with files from Autolab’s NOVA and BioLogic’s EC-Lab (for CV analysis), with additional formats planned for future updates as documented in the repository. Users can upload these files directly to the web-based interface without additional preprocessing, provided they follow the standard export structures of the supported software. The software automatically parses time, current, and potential data for downstream analysis, with built-in file name and format validation to ensure compatibility and alert users to formatting issues.
+Envismetrics supports plain-text electrochemical data formats (.xlsx, .csv, .txt) exported from potentiostat software. In the current release, compatibility has been validated for Autolab’s NOVA and BioLogic’s EC-Lab (CV analysis), reflecting the instruments available during development. Support for additional formats will be added as needed, leveraging the modular file-parsing architecture.
+
+Users can upload exported files directly to the web-based interface without manual preprocessing, provided they follow the standard export structures of the supported software. The parser automatically detects key experimental parameters—such as scan rate, rotation speed, time, current, and potential—performs file name and format validation, and alerts users to any compatibility or formatting issues, ensuring smooth integration into the downstream analysis workflow.
 
 ![Data Import Window: Users can easily drag and drop or select their experimental data for quick and straightforward import.](Image_Set/1.png){ width=80% }
 
@@ -121,13 +123,15 @@ Envismetrics supports plain-text electrochemical data formats, including `.xlsx`
 
 ### Function 1: Plotting and Gaussian Filtering
 
-This function plots the experimental data sorted by RPM (rotations per minute) and provides an optional Gaussian smoothing feature. Users may specify a sigma value to apply the filter — larger sigma values result in smoother curves by reducing high-frequency noise, but can also suppress sharp features in the data. To disable filtering, users should set sigma = 0.
+This function sorts experimental data by rotation rate (RPM) and generates the corresponding current–potential plots. An optional Gaussian smoothing can be applied by specifying a **sigma** value: larger sigma values produce smoother curves by attenuating high-frequency noise, while smaller values preserve more detail. To disable smoothing, set `sigma = 0`.
 
-The Gaussian filter works by convolving the current signal with a normal distribution (Gaussian kernel), helping to visualize trends in noisy electrochemical data. However, users are advised to apply filtering judiciously, as excessive smoothing may obscure important peaks or kinetic features.
+The Gaussian filter operates by convolving the current signal with a Gaussian kernel, enhancing trend visibility in noisy datasets. While smoothing can improve clarity, excessive filtering may suppress genuine electrochemical features—such as sharp peaks or kinetic shoulders—so it should be applied with caution.
 
 ### Function 2: Levich and Koutecky–Levich Analysis
 
-Levich and Koutecky–Levich (KL) analyses are commonly used for studying electrochemical reactions under laminar flow convection conditions [@masa2014koutecky]. *Envismetrics* streamlines these workflows by automatically generating both Levich and KL plots from experimental data.
+Levich and Koutecký–Levich analyses are widely used to study electrochemical reactions under laminar flow convection conditions [@masa2014koutecky]. *Envismetrics* automates these workflows by generating both Levich and KL plots directly from experimental data.
+
+**Levich analysis** estimates the diffusion coefficient $D$ under mass-transport-limited conditions, based on:
 
 Levich analysis is primarily used to determine the diffusion coefficient $D$ under mass-transport-limited conditions. The classical Levich equation is:
 
@@ -135,7 +139,7 @@ $$
 i_L = 0.62\, n F A D^{2/3} \omega^{1/2} \nu^{-1/6} C
 $$
 
-Koutecky–Levich analysis expands on this by incorporating kinetic limitations and is often used to estimate the standard rate constant $k_0$. It retains the same diffusion-related slope as the Levich plot. The KL equation is:
+**Koutecký–Levich analysis** accounts for kinetic limitations and is often used to estimate the standard rate constant $k_0$ and charge-transfer coefficient $\alpha$. It retains the same diffusion-related slope as the Levich:
 
 $$
 \frac{1}{i} = \frac{1}{i_k} + \frac{1}{i_L}
@@ -149,11 +153,8 @@ $$
 
 In *Envismetrics*, users can select potential values to automatically generate these plots, with slopes and derived kinetic parameters $D$ calculated dynamically for each potential. This feature enables users to explore the potential dependence of apparent kinetics and identify plateaus where mass transport dominates. Users should apply Levich/KL analyses only in regions where steady-state limiting currents are observed. *Envismetrics* allows flexible selection of such regions, but interpretation should follow electrochemical theory to avoid applying these models in inappropriate potential windows. The Koutecky–Levich analysis module is under active development to support the calculation of kinetic parameters, including the standard heterogeneous rate constant $k_0$ and the charge-transfer coefficient $\alpha$.
 
-
-> **Note**: While *Envismetrics* may display diffusion coefficients calculated at multiple potentials under inappropriate potential range settings, this is **not intended to imply that $D$ varies with potential**. Rather, each $D$ value is obtained by applying the **definitional form** of the Levich and Koutecky–Levich equation at that specific potential.
+> **Important Note:** These models are only valid in the steady-state limiting-current region. Values of $D$ shown at other potentials **do not indicate a physical change in diffusion coefficient**, but simply reflect the **definitional form** of the equations applied at that potential. Users should select only plateau potentials for quantitative analysis.
 > 
-> Users are advised to select only steady-state plateau potentials for quantitative Levich and Koutecky–Levich analysis.
-
 <figure style="width: 100%; margin: auto; text-align: center;">
   <img src="Image_Set/KL_D23.png" alt="Koutecky–Levich plot module" style="width: 100%;" />
   <figcaption><strong>Figure 2.</strong> Koutecky–Levich plot module (logarithmic scale on the y-axis).</figcaption>
