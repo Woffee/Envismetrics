@@ -42,15 +42,13 @@ Each file contains a linear sweep voltammetry (LSV) curve recorded at a specific
 | **Kinematic viscosity (ν)**         | `0.01 cm²/s`                      | For aqueous systems near room temperature                                  |
 | **Number of electrons (n)**         | `1`                               | Number of electrons involved in oxidation                                  |
 | **Method**                          | `Levich plot and Levich analysis` | Enables linear fit and diffusion coefficient calculation                    |
-| **Applied potential range (V)**     | `(-1, 1)`                         | Region for identifying limiting current                                     |
-| **Number of potentials to display** | `9`                               | Number of points selected for Levich plot                                   |
+| **Applied potential range (V)**     | `(-0.12, 0.2)`                    | Region for identifying limiting current                                     |
+| **Number of potentials to display** | `6`                               | Number of points selected for Levich plot                                   |
 | **Potential step interval (mV)**    | `37`                              | Controls resolution of the dot plot                                         |
 
 6. Click **Next** to enter **HDV-3.1**  
 7. The tool will generate:
-   - **Figure 2a**: Levich plot – limiting current vs. √ω  
-   - **Figure 2b**: Slope and diffusion coefficient from linear fit
-
+   - **Figure 2**: Koutecky-Levich plot
 ---
 
 ## Notes
