@@ -1,5 +1,5 @@
 ---
-title: 'Envismetrics: A Python-based software for electrochemical kinetic analysis'
+title: 'Envisimetrics: A Python-based software for automated analysis of electrochemical data'
 tags:
   - Python
   - electrochemistry
