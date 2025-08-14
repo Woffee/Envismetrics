@@ -264,7 +264,7 @@ $$
 
 ### Function 1: Plotting and Gaussian Filtering
 
-This function generates plots of applied potential vs. time and corresponding current vs. time. Users have the option to input a sigma value to apply a Gaussian filter, which smooths the data for clearer visualization. Both the original and smoothed figures are displayed, allowing for easy comparison and analysis.
+Plots applied potential vs. time and corresponding current vs. time, with an optional Gaussian filter for smoothing (user-defined $\sigma$). Function operates identically to Gaussian filtering in HDV and CV modules.
 
 ### Function 2: Cottrell Equation Plot
 
@@ -275,7 +275,6 @@ i(t) = \frac{nFA C_0 D^{1/2}}{\pi^{1/2} t^{1/2}}
 $$
 
 In *Envismetrics*, users can input experimental parameters such as the fitting interval (number of the input files), $n$, $A$, and $C_0$. The software then plots $i(t)$ vs. $\sqrt{nFAC/\pi t}$ and performs linear regression to determine $D$. The outputs include both a regression figure and a summary table of calculated diffusion coefficients.
-
 
 <!--
 ![(a) Plotting and Gaussian Filtering I vs t](Image_Set/CAIt_D.png){ width=45% }
