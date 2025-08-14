@@ -228,7 +228,7 @@ $$
 \alpha_c = -\frac{RT}{F} \left( \frac{d \ln |j_{c, \text{corr}}|}{dE} \right)
 $$
 
-A **mass-transport-corrected** version, proposed by Li *et al.* [@Li2018], is also implemented in this module. This approach has been applied in other studies, such as dopamine oxidation at gold electrodes by Bacil *et al.* [@Bacil2020]. The corrected anodic transfer coefficient is calculated as:
+A **mass-transport-corrected** version is also implemented in this module [@Li2018]. This approach has been applied in other studies, such as dopamine oxidation at gold electrodes [@Bacil2020]. The corrected anodic transfer coefficient is calculated as:
 
 $$
 -\frac{d\ln \left( \frac{1}{I_a} - \frac{1}{I_{\text{peak}}} \right)}{d\theta} = \alpha_a'
