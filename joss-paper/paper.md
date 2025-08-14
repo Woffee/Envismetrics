@@ -164,29 +164,35 @@ In *Envismetrics*, users can select potential values to automatically generate t
 
 ### Function 1: Plotting and Gaussian Filtering
 
-This function plots cyclic voltammetry data sorted based on the rate constant value and allows users to apply a Gaussian filter for smoothing. Users can input the sigma value to adjust the degree of smoothing. Both the original figure and the smoothed data will be displayed, allowing users to compare the raw and processed results.
+Plots cyclic voltammetry data and optionally applies Gaussian smoothing. Users can specify the `sigma` value to control smoothing intensity — higher values reduce high-frequency noise but may also attenuate sharp features. Both the raw and smoothed curves are displayed for direct comparison.  
+*(Identical in functionality to the HDV Gaussian filtering feature.)*
 
 ### Function 2: Peak Searching
 
-Peak searching is essential for calculating formal potential, peak separation, and performing Randles-Ševčík analysis. The software provides multiple searching methods, such as max/min and knee/elbow detection within specific ranges, allowing the analysis of multiple peaks and complex reactions. The software will record all the peak points for use in future analyses, and the results will be displayed in a plot.
+Peak identification is essential for calculating formal potentials, peak separations, and performing Randles–Ševčík analysis. *Envismetrics* primarily uses **Max/Min Search** to detect absolute peak positions within user-defined potential ranges. An additional **inflection-point detection** option is available for more complex waveforms. Users can define custom search ranges to target specific redox processes. Multiple peaks can be resolved in multi-step or complex reactions. All detected peak coordinates are stored for downstream analysis and are overlaid on the CV plot for visual verification.
+
 
 ### Function 3: Randles–Ševčík Analysis
 
-The Randles–Ševčík analysis utilizes equations that incorporate the transfer coefficient and calculate the diffusion coefficient from the peak current and scan rate. This function supports both reversible and irreversible versions of the Randles–Ševčík equation [@zanello2019inorganic]. The peak information data used in this analysis is obtained from Function 2 (Peak Searching):
+The Randles–Ševčík analysis estimates the diffusion coefficient $D$ from the relationship between peak current and scan rate, and can be applied to both reversible and irreversible electrochemical systems [@zanello2019inorganic]. Peak parameters for this calculation are obtained from **Function 2 (Peak Searching)**.
+
+For a **reversible** redox process, the Randles–Ševčík equation is:  
 
 $$
 I_{\text{peak}} = 0.4463 \ n \ F \ C \ A \sqrt{\frac{n F \nu D}{R T}}
 $$
 
+For an **irreversible** process, the equation becomes:  
+
 $$
 I_{\text{peak}} = 0.4463 \sqrt{n^{\prime} + \beta} \ n \ F \ C \ A \sqrt{\frac{n F \nu D}{R T}}
 $$
 
-In the implementation, setting \(\sqrt{n^{\prime} + \beta} = 1\) corresponds to the reversible case. For irreversible cases, \(\sqrt{n^{\prime} + \beta}\) is computed from user-specified \(\alpha\) and \(n'\) values. This design allows the same computational pipeline to handle both cases while preserving explicit parameter control for advanced users.
+In *Envismetrics*, setting $\sqrt{n' + \beta} = 1$ yields the reversible case. For irreversible systems, $\sqrt{n' + \beta}$ is calculated from the user-specified $\alpha$ and $n'$, allowing both scenarios to be handled within a single computational workflow while keeping full control over input parameters.
 
-### Function 4: Standard Rate Constant Calculation (Advanced)
+### Function 4: Standard Rate Constant Calculation (Experimental Method)
 
-Function 4 implements an advanced, optional method for estimating the standard heterogeneous rate constant, $k_0$, using a dimensionless kinetic parameter, $\Psi$, that relates $k_0$ to the system’s electrochemical and physical properties. This approach is based on the classical Nicholson model [@nicholson1965theory] and extended by Lavagnini *et al.* [@lavagnini2004extended] to cover a broader range of peak separations ($\Delta E_p$), with additional support for the Klingler–Kochi formulation [@Klingler1981] in highly irreversible systems.
+Function 4 implements an advanced, optional method for estimating the standard heterogeneous rate constant $k_0$, using a dimensionless kinetic parameter $\Psi$ that relates $k_0$ to the system’s electrochemical and physical properties. This approach is based on the classical Nicholson model and extended by Lavagnini *et al.* to cover a broader range of peak separations ($\Delta E_p$), with additional support for the Klingler–Kochi formulation in highly irreversible systems [@nicholson1965theory; @lavagnini2004extended; @Klingler1981].
 
 $$
 \Psi = \frac{0.6288 + 0.0021 \cdot X}{1 - 0.017 \cdot X}, \quad X = \Delta E_p \cdot n \ \ (\text{in mV})
@@ -206,13 +212,13 @@ $$
 k^0 = \Psi \cdot \left(\frac{D \cdot n \cdot F}{R \cdot T}\right)^{1/2}
 $$
 
-**Assumptions and Scope**  
-This method assumes diffusion-controlled electron transfer without coupled chemical reactions or adsorption phenomena, and is most applicable to well-defined, peak-shaped CVs under quasi-reversible or irreversible conditions. The diffusion coefficient $D$ must be known or reliably estimated. Since the Lavagnini approach is empirical, optimal performance is expected when $k_0$ lies within an intermediate kinetic range. Users are advised to interpret $k_0$ results in accordance with electrochemical theory, and to restrict use of this feature to exploratory or comparative analysis rather than routine novice workflows.
-
+> ⚠ **Usage Note:** This method is sensitive to experimental noise and the accurate determination of $\Delta E_p$.  
+> It should only be applied under conditions that satisfy the theoretical assumptions of the Nicholson or Klingler–Kochi models.  
+> Users are advised to cross-check results with alternative approaches where possible.
 
 ### Function 5: Tafel Analysis Module
 
-Tafel analysis is used to determine the anodic and cathodic transfer coefficients. The International Union of Pure and Applied Chemistry (IUPAC) formally defines these coefficients as experimentally determined values, given by [@guidelli2014defining]:
+Tafel analysis is used to determine the anodic ($\alpha_a$) and cathodic ($\alpha_c$) transfer coefficients. The International Union of Pure and Applied Chemistry (IUPAC) formally defines these coefficients as experimentally determined values [@guidelli2014defining]:
 
 $$
 \alpha_a = \frac{RT}{F} \left( \frac{d \ln j_{a, \text{corr}}}{dE} \right)
@@ -222,11 +228,14 @@ $$
 \alpha_c = -\frac{RT}{F} \left( \frac{d \ln |j_{c, \text{corr}}|}{dE} \right)
 $$
 
-Additionally, a mass-transport corrected version has been proposed and implemented in this module [@LI2018117]. This method has also been applied in other research, including the study of dopamine oxidation at gold electrodes conducted by Bacil and co-workers [@C9CP05527D]. The transfer coefficient is calculated by: 
+A **mass-transport-corrected** version, proposed by Li *et al.* [@LI2018117], is also implemented in this module. This approach has been applied in other studies, such as dopamine oxidation at gold electrodes by Bacil *et al.* [@C9CP05527D]. The corrected anodic transfer coefficient is calculated as:
 
 $$
 -\frac{d\ln \left( \frac{1}{I_a} - \frac{1}{I_{\text{peak}}} \right)}{d\theta} = \alpha_a'
 $$
+
+> ⚠ **Usage Note:** The accuracy of Tafel slope and $\alpha$ determination depends strongly on proper baseline correction, mass-transport correction, and the selection of the linear Tafel region.  
+> Misidentifying the potential range can lead to significant errors in calculated kinetic parameters.
 
 <!--
 ![(a) Peak Searching module](Image_Set/CVPS_D.png){ width=45% }
