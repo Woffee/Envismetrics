@@ -52,22 +52,6 @@ def reorder(filename):
         return -1  # Default sorting value if RPM not found
 
 
-def extract_rpm(filename):
-    """
-    Extract RPM string from filename using regex pattern.
-
-    Example:
-        Input: "sample_500rpm.xlsx"
-        Output: "500rpm"
-    """
-    pattern = r'(?:^|_)(\d+rpm)\.'
-    match = re.search(pattern, filename)
-    if match:
-        return match.group(1)
-    else:
-        return None
-
-
 def check_files(files):
     """
     Check whether all input files have supported extensions (.xlsx or .txt).

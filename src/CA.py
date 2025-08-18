@@ -141,7 +141,6 @@ class CA(BaseModule):
         if 'CA' not in todata.keys():
             todata['CA'] = {}
 
-        status_msg = ''
         try:
             # Load data and check for required columns
             data = self.read_data()

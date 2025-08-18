@@ -83,136 +83,6 @@ colors = [
     '#17becf'   # tab:cyan
 ]
 
-def find_max(x, y, start, end):
-    """
-    Find the maximum y-value and corresponding x in a given x-range.
-
-    Parameters:
-        x (list or np.array): x-values
-        y (list or np.array): y-values
-        start (float): lower x-bound
-        end (float): upper x-bound
-
-    Returns:
-        tuple: (x, y) position of maximum y-value within range
-    """
-    ma = -1       # Initialize max y with a sentinel; assumes y-values are non-negative
-    xx = -1       # Placeholder for x corresponding to max y
-    yy = -1       # Placeholder for max y itself
-
-    # Iterate through all x-values to identify those within the specified range
-    for i in range(len(x)):
-        if start <= x[i] <= end:
-            # Update max only if current y-value exceeds previous max
-            if y[i] > ma:
-                ma = y[i]
-                xx = x[i]
-                yy = y[i]
-
-    # Return the (x, y) coordinates of the max y-value found in the given range
-    return xx, yy
-
-
-def find_min(x, y, start, end):
-    """
-    Find the minimum y-value and corresponding x in a given x-range.
-
-    Parameters:
-        x (list or np.array): x-values
-        y (list or np.array): y-values
-        start (float): lower x-bound
-        end (float): upper x-bound
-
-    Returns:
-        tuple: (x, y) position of minimum y-value within range
-    """
-    mi = 10000    # Initialize min y with a large number as sentinel
-                  # Assumes y-values are significantly smaller than 10^4
-    xx = -1       # Placeholder for x corresponding to min y
-    yy = -1       # Placeholder for min y itself
-
-    # Iterate through all x-values to check which ones fall in the target range
-    for i in range(len(x)):
-        if start <= x[i] <= end:
-            # Update min only if current y-value is smaller
-            if y[i] < mi:
-                mi = y[i]
-                xx = x[i]
-                yy = y[i]
-
-    # Return the (x, y) coordinates of the min y-value found in the specified range
-    return xx, yy
-
-
-def find_y(x, y, xi):
-    """
-    Find the y-value corresponding to a given x-value (xi).
-
-    Parameters:
-        x (list): list of x-values
-        y (list): list of y-values
-        xi (float): x target
-
-    Returns:
-        float: y-value at xi or -1 if not found
-    """
-    # Linear scan to find the x that exactly matches xi
-    for i in range(len(x)):
-        if x[i] == xi:
-            return y[i]
-
-    # If xi not found in x (e.g., due to floating-point mismatch), return fallback
-    return -1
-
-
-def separater(x, y, left, right):
-    """
-    Separate a cyclic voltammogram into upper and lower sweep segments.
-
-    Parameters:
-        x (pd.Series): potential values
-        y (pd.Series): current values
-        left (float): left potential bound
-        right (float): right potential bound
-
-    Returns:
-        tuple: (upperx, lowerx, uppery, lowery)
-    """
-    upperx = []  # Stores x-values (potential) for forward (upper) scan
-    lowerx = []  # Stores x-values for reverse (lower) scan
-    uppery = []  # Stores corresponding y-values (current) for upper scan
-    lowery = []  # Stores y-values for lower scan
-
-    x = x.tolist()  # Convert input from pd.Series to native Python list
-    y = y.tolist()
-
-    # Identify the index of key potential boundaries
-    boundary_l = x.index(left)
-    boundary_r = x.index(right)
-
-    # Determine scan direction based on index positions of left/right bounds
-    # This accommodates both clockwise and counter-clockwise CV loops
-    if boundary_r < boundary_l:
-        # Sweep goes past the array end and wraps around
-        # Upper scan is from left to right via wrap-around
-        upperx = x[boundary_l:] + x[:boundary_r + 1]
-        uppery = y[boundary_l:] + y[:boundary_r + 1]
-
-        # Lower scan is the remaining part (reverse direction)
-        lowerx = x[boundary_r:boundary_l + 1]
-        lowery = y[boundary_r:boundary_l + 1]
-    else:
-        # Standard scan direction (left to right within bounds)
-        upperx = x[boundary_l:boundary_r + 1]
-        uppery = y[boundary_l:boundary_r + 1]
-
-        # Lower scan wraps around the other side
-        lowerx = x[boundary_r:] + x[:boundary_l + 1]
-        lowery = y[boundary_r:] + y[:boundary_l + 1]
-
-    # Return separated potential and current values for both scan directions
-    return upperx, lowerx, uppery, lowery
-
 
 def Search_scan_rate(filename):
     """
@@ -231,55 +101,6 @@ def Search_scan_rate(filename):
     else:
         return -1  # Return -1 if no match is found (e.g., malformed filename)
 
-
-def Milad(filename):
-    """
-    Extract numeric value after 'PFOS_' prefix in filename.
-
-    Parameters:
-        filename (str): input filename
-
-    Returns:
-        int: extracted number or -1 if not found
-    """
-    # Look for digits following the prefix 'PFOS_'
-    match = re.search(r'PFOS_(\d+)', filename)
-    if match:
-        return int(match.group(1))  # Extract and return the numeric portion
-    else:
-        return -1  # Return fallback value if pattern is not found
-
-def read_ec_lab_file(file_path, encoding='utf-8'):
-    """
-    Read and parse a text file generated by EC-Lab software.
-
-    Parameters:
-        file_path (str): Path to the .txt file.
-        encoding (str): File encoding, default is 'utf-8'.
-
-    Returns:
-        pd.DataFrame: DataFrame with columns ['Ewe/V', '<I>/mA'] containing potential and current values.
-    """
-    with open(file_path, 'r', encoding=encoding) as file:
-        lines = file.readlines()
-
-    # EC-Lab exports typically contain 56 header lines before data begins
-    # Header includes metadata, settings, and column descriptions
-    num_header_lines = 56
-
-    # Extract only the data lines after the header section
-    data_lines = lines[num_header_lines:]
-
-    data = []
-    for line in data_lines:
-        if line.strip():  # Skip blank lines to avoid parsing errors
-            parts = line.split()
-            if len(parts) == 2:  # Expect exactly two columns per data line
-                ewe, i_mA = parts
-                data.append((float(ewe), float(i_mA)))  # Convert strings to floats
-
-    # Return as a pandas DataFrame with electrochemical column names
-    return pd.DataFrame(data, columns=['Ewe/V', '<I>/mA'])
 
 
 def read_auto_lab_file(file):
@@ -342,27 +163,6 @@ def make_color_darker(color, factor):
 
     # Return the modified color in hex format (2-digit padded lowercase hex)
     return f'#{r:02x}{g:02x}{b:02x}'
-
-
-
-def check_files(files):
-    """
-    Check if a list of filenames all have valid extensions.
-
-    Parameters:
-        files (list of str): List of file paths.
-
-    Returns:
-        bool: True if all files are allowed, False otherwise.
-    """
-    for f in files:
-        # Extract file extension (case-insensitive)
-        ext = f.split('.')[-1].lower()
-
-        # Validate extension against global ALLOWED_EXTENSIONS (e.g., ['xlsx', 'txt', 'csv'])
-        if ext not in ALLOWED_EXTENSIONS:
-            return False  # Early return on first invalid file
-    return True
 
 
 def find_max(x, y, start, end):
@@ -484,10 +284,6 @@ def separater(x, y, left, right):
     Returns:
         tuple: (upperx, lowerx, uppery, lowery), each a list of floats
     """
-    upperx = []
-    lowerx = []
-    uppery = []
-    lowery = []
 
     # Convert pandas Series to native Python lists for indexing and concatenation
     x = x.tolist()
@@ -867,7 +663,6 @@ class CV(BaseModule):
         Returns:
             dict: A status dictionary with processing results, image paths, and logs
         """
-        sigma = float(all_params['sigma'])
         status_msg = ''
 
         # === Step 1: Read and validate input data ===
@@ -1179,7 +974,6 @@ class CV(BaseModule):
             print(all_params)
 
             # --- 1. Parse user input parameters ---
-            method = all_params['method']
             peak_info = {}
 
             # Convert string inputs to Python lists of tuples/ints
@@ -1192,9 +986,6 @@ class CV(BaseModule):
 
             example_scan_rate = all_params['example_scan']
             example_cycle = all_params['example_cycle']
-
-            # Use sigma from previous form1 input for consistent smoothing
-            sigma = float(self.res_data['CV']['form1']['input']['sigma'])
 
             # --- 2. Read file metadata and resolve real paths ---
             with open(self.files_info, 'r') as f:
@@ -1468,17 +1259,12 @@ class CV(BaseModule):
             peak_info = form2_res['peak_info']
 
             # input calculate parameter
-            # n = 1  # number of electron transfer
-            # C = 2e-6  # initial concertration in mol/cm3
-            # T = 298.15  # temperature in K
             n = int(all_params['n'])
             C = float(all_params['c'])
             T = float(all_params['t'])
             electrode_dia = float(all_params['d'])
-            # print(all_params)
 
             # Diameter in cm
-            # electrode_dia = 0.30  # electorde diameter in cm
             A_Real = np.pi * (electrode_dia / 2) ** 2
             print('Electrode Surface Area:', A_Real)
 
@@ -1494,7 +1280,6 @@ class CV(BaseModule):
             plt.figure()
             for i in range(len(peak_range_ox)):
                 scan_rate_05 = ((np.array(peak_info[f'Scan_Rate{i}'])) / 1000) ** 0.5
-                scan_rate = np.array(peak_info[f'Scan_Rate{i}']) / 1000
 
                 La = LinearRegression().fit(np.array(scan_rate_05).reshape(-1, 1),
                                             np.array(peak_info[f'Ia{i}']).reshape(-1, 1))
@@ -1505,9 +1290,6 @@ class CV(BaseModule):
                                             np.array(peak_info[f'Ic{i}']).reshape(-1, 1))
                 Ic = Lc.intercept_[0]
                 Sc = Lc.coef_[0][0]
-
-                #     Ia_sim = 0.4463 * (n * F * C * A_Real * ((n * F * scan_rate * D[i]) / (R * T)) ** 0.5) + Ia
-                #     Ic_sim = -0.4463 * (n * F * C * A_Real * ((n * F * scan_rate * D[i]) / (R * T)) ** 0.5) + Ic
 
                 sim_x = np.linspace(min(scan_rate_05), max(scan_rate_05), 100)
                 sim_ya = Sa * sim_x + Ia
@@ -1520,9 +1302,7 @@ class CV(BaseModule):
                 D_ox.append(D_cala)
                 D_re.append(D_calc)
 
-                darker_color = make_color_darker(colors[i], 0.5)
                 plt.scatter(scan_rate_05, peak_info[f'Ia{i}'], label=f'Exp-Ox{i + 1}', s=10, color=colors[i])
-                #     plt.scatter(scan_rate_05,Ia_sim,label=f'Sim-Ox{i+1}',s=10, marker='^', color = darker_color)
 
                 plt.plot(sim_x, sim_ya, color='red')
                 plt.xlabel('Scanning Rate ν^1/2')
@@ -1530,7 +1310,6 @@ class CV(BaseModule):
                 plt.legend()
 
                 plt.scatter(scan_rate_05, peak_info[f'Ic{i}'], label=f'Exp-Re{i + 1}', s=10, color=colors[i+1])
-                #     plt.scatter(scan_rate_05,Ic_sim,label=f'Sim-Re{i+1}',s=10, marker='^', color = darker_color)
                 plt.plot(sim_x, sim_yc, color='red')
                 plt.xlabel('Scanning Rate ν^1/2')
                 plt.ylabel('Current Peak/A')
@@ -1621,7 +1400,6 @@ class CV(BaseModule):
             for i in range(len(peak_range_ox)):
                 # Convert scan rate to V/s and take square root (as required by Randles–Ševčík)
                 scan_rate_05 = ((np.array(peak_info[f'Scan_Rate{i}'])) / 1000) ** 0.5
-                scan_rate = np.array(peak_info[f'Scan_Rate{i}']) / 1000
 
                 # === Linear regression of Ipa vs sqrt(scan rate) for oxidation ===
                 La = LinearRegression().fit(scan_rate_05.reshape(-1, 1), np.array(peak_info[f'Ia{i}']).reshape(-1, 1))
@@ -1649,7 +1427,6 @@ class CV(BaseModule):
                 D_re.append(D_calc)
 
                 # === Plot experimental and fitted oxidation/reduction curves ===
-                darker_color = make_color_darker(colors[i], 0.5)
                 plt.scatter(scan_rate_05, peak_info[f'Ia{i}'], label=f'Exp-Ox{i + 1}', s=10, color=colors[i])
                 plt.plot(sim_x, sim_ya, color='red')
 
@@ -1722,7 +1499,6 @@ class CV(BaseModule):
             F = 96485.33212                                              # Faraday constant
             R = 8.314462618                                              # Gas constant
 
-            k_list = []      # Store calculated rate constants
             res = []         # Store results and image paths
 
             # === Loop through each peak (for each redox couple) ===
@@ -1935,7 +1711,6 @@ class CV(BaseModule):
                 # Construct Laviron-type term: I^2 / (I_p - I)
                 I_term = (I_Peak ** 2) / (I_Peak - smoothed_upperI)
                 lnI_term = special_ln(I_term)  # log-transformed term (with safe handling)
-                upperO = (F / (R * T)) * upperU  # normalized potential axis
 
                 # Derive dln(I_term)/dE and back-calculate α
                 dlnI_term_dU = np.gradient(lnI_term, upperU)

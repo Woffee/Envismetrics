@@ -168,9 +168,6 @@ def hyd_elec2(version=None):
     Returns:
         HTML page: m1_hyd_elec_step2.html or m1_hyd_elec_step3.html based on step.
     """
-    data = {
-        'version': version
-    }
 
     # Fixed module name for routing HDV logic
     module = 'HDV'
@@ -268,9 +265,6 @@ def cv2(version=None):
             - m2_cv_step3.html: General CV step 3 results.
             - m2_cv_step3_func3.html / func4 / func5: Specific CV function visualizations.
     """
-    data = {
-        'version': version
-    }
 
     module = 'CV'
     step = int(request.args.get('step', '2'))
@@ -320,7 +314,6 @@ def cv2(version=None):
             return render_template('m2_cv_step3_func5.html', data=data)
         else:
             return render_template('m2_cv_step3.html', data=data)
-    return render_template('m2_cv_step2.html', data=data)
 
 @app.route("/cv/results/<version>")
 def cv_res(version=None):
@@ -342,10 +335,6 @@ def cv_res(version=None):
         Or:
             - 404 error if function not supported.
     """
-    data = {
-        'version': version
-    }
-
     module = 'CV'
     func = int(request.args.get('func', '0'))
 
@@ -435,9 +424,6 @@ def step_methods2(version=None):
         - Loads and checks the 'status' field from the corresponding form result (form1 for step2, form2 for step3).
         - Controls UI visibility with `processing_display` and `form1_processing_display` flags.
     """
-    data = {
-        'version': version
-    }
 
     module = 'CA'
     step = int(request.args.get('step', '2'))
@@ -566,7 +552,7 @@ def check(module, version):
                 data = {'result': data[module][f]['status']}
         except Exception as e:
             data = {'result': 'processing'}
-            return jsonify(data)
+        return jsonify(data)
     elif module.upper() == 'HDV':
         if step == 2:
             f = 'form1'
@@ -581,7 +567,7 @@ def check(module, version):
             data = {'result': data[module][f]['status']}
         except Exception as e:
             data = {'result': 'processing'}
-            return jsonify(data)
+        return jsonify(data)
     elif module.upper() == 'CA':
         f = 'form{}'.format(step-1)
         try:

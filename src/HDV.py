@@ -437,14 +437,12 @@ class HDV(BaseModule):
 
         # Parse electrochemical input parameters
         input_n = int(all_params['input_N'])          # number of electrons (n)
-        input_a = float(all_params['input_A'])        # geometric area (not used here)
         input_v = float(all_params['input_V'])        # kinematic viscosity (ν)
         input_c = float(all_params['input_C'])        # analyte concentration (mol/cm^3)
 
         # Extract and parse potential range string into float bounds
         input_range = all_params['input_range'].replace("(", "").replace(")", "").split(",")
         n_points = int(all_params['input_n_points'])  # number of potential points to analyze
-        interval = int(all_params['input_interval'])  # not used here
 
         # Define potential window
         start_value = float(input_range[0])
@@ -593,13 +591,11 @@ class HDV(BaseModule):
         """
         # === Parse user input parameters ===
         input_n = int(all_params['input_N'])       # Number of electrons transferred
-        input_a = float(all_params['input_A'])     # Electrode area (not used here)
         input_v = float(all_params['input_V'])     # Kinematic viscosity
         input_c = float(all_params['input_C'])     # Reactant concentration
 
         # Parse potential range from string to float
         input_range = all_params['input_range'].replace("(", "").replace(")", "").split(",")
-        n_points = int(all_params['input_n_points'])    # Not used in fig2
         interval = int(all_params['input_interval'])    # Sampling interval (e.g., every 3rd point)
 
         # Define bounds of potential range
@@ -639,7 +635,6 @@ class HDV(BaseModule):
         # === Initialize result containers ===
         Levich_slope = []      # Linear fit slopes (B) at each potential
         Levich_intercept = []  # Linear fit intercepts (not used)
-        D = []                 # Calculated diffusion coefficients
         E_plot = []            # Store potential values plotted
 
         # Try to retrieve Gaussian smoothing sigma from step1
@@ -780,13 +775,11 @@ class HDV(BaseModule):
         """
         # === Parse input parameters ===
         input_n = int(all_params['input_N'])
-        input_a = float(all_params['input_A'])
         input_v = float(all_params['input_V'])
         input_c = float(all_params['input_C'])
 
         input_range = all_params['input_range'].replace("(","").replace(")", "").split(",")
         n_points = int(all_params['input_n_points'])
-        interval = int(all_params['input_interval'])
 
         # === Define physical constants ===
         start_value = float(input_range[0])
@@ -929,12 +922,10 @@ class HDV(BaseModule):
         """
         # === Parse parameters ===
         input_n = int(all_params['input_N'])
-        input_a = float(all_params['input_A'])
         input_v = float(all_params['input_V'])
         input_c = float(all_params['input_C'])
 
         input_range = all_params['input_range'].replace("(", "").replace(")", "").split(",")
-        n_points = int(all_params['input_n_points'])
         interval = int(all_params['input_interval'])
 
         # === Range for potential axis ===
@@ -951,7 +942,6 @@ class HDV(BaseModule):
         C = input_c
 
         # === Read data and extract potential axis ===
-        Koutecky_Levich_plotshow_data = pd.DataFrame()
         data = self.read_data()
         E = None
         for rpm, df in data.items():
@@ -974,8 +964,6 @@ class HDV(BaseModule):
 
         # === Initialize containers for output values ===
         Koutecky_Levich_slope = []
-        Koutecky_Levich_intercept = []
-        D = []
         E_plot = []
 
         # === Gaussian smoothing sigma from previous step ===
