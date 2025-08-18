@@ -261,6 +261,13 @@ By following these simple steps, you can efficiently utilize Envismetrics for yo
 - Interactive, user-defined fitting regions in regression plots.
 - Export of results and figures in CSV/JSON formats for reproducibility.
 - Early-stage **EIS module** development for impedance spectroscopy integration.
+- Improved error handling and user messages: Refine runtime diagnostics, with automatic suggestions for axis ranges and data domains.
+- 
+---
+
+## Deployment & Environment Management (Planned)
+- **Pixi-based environment management**: Transition from conda/requirements.txt to Pixi for reproducible, task-based environments.
+- **Pyodide/WebAssembly deployment**: Explore browser-based execution to allow users to run Envismetrics directly from GitHub Pages without installing Python locally.
 
 ---
 
