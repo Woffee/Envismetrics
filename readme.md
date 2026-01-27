@@ -31,9 +31,11 @@
 
 To run Envismetrics locally, you will need:
 
-- Python 3.8 or higher: [Check here](https://www.python.org/downloads/)
+- **Python 3.10 or higher** (required): [Check here](https://www.python.org/downloads/)
 - Git: [Install Git](https://git-scm.com/)
 - (Optional) Anaconda: [Install Anaconda](https://www.anaconda.com/download)
+
+⚠️ **Important**: This project requires Python 3.10+ due to dependency compatibility (numpy, pandas, etc.). If you're using Python 3.7-3.9, please upgrade your Python version.
 
 To check if Git and Python are installed:
 ```sh
@@ -92,7 +94,7 @@ pip install -r requirements.txt
 ### Alternatively, Anaconda users can create a new environment:
 
 ```sh
-conda create -n envismetrics python=3.9
+conda create -n envismetrics python=3.10
 conda activate envismetrics
 pip install -r requirements.txt
 ```
