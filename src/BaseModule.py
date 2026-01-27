@@ -52,6 +52,14 @@ def reorder(filename):
         return -1  # Default sorting value if RPM not found
 
 
+def extract_rpm(filename):
+    """
+    Extract RPM value from filename.
+    Alias for reorder() function for backward compatibility.
+    """
+    return reorder(filename)
+
+
 def check_files(files):
     """
     Check whether all input files have supported extensions (.xlsx or .txt).
@@ -96,6 +104,22 @@ class BaseModule(object):
 
         # Load existing result data (e.g. form1, form2, etc.), or initialize a new dictionary
         self.res_data = self.read_result_data()
+
+    def get_num(self, filename):
+        """
+        Extract the first integer number found in a filename using regular expressions.
+
+        Parameters:
+            filename (str): Input filename string (e.g., '3PFOA400ppm_75075_CA.xlsx').
+
+        Returns:
+            int or None: The first numeric match converted to int, or None if no number is found.
+
+        Notes:
+            This is commonly used to extract concentration, ID, or numeric prefixes from filenames.
+        """
+        match = re.search(r'(\d+)', filename)
+        return int(match.group(1)) if match else None
 
 
     def read_result_data(self):
