@@ -167,13 +167,11 @@ class BaseModule(object):
         files = []
         real_file_path = {}
         for info in info_list:
-            # Get user-uploaded filename and real stored filename
             f = info['filename']
             file = info['existed_filename']
-            if not os.path.isfile(file):
-                continue
-            files.append(f)
-            real_file_path[f] = file
+            if os.path.isfile(file):
+                files.append(f)
+                real_file_path[f] = file
 
         # Sort files by RPM if available
         files = sorted(files, key=reorder)
@@ -181,32 +179,42 @@ class BaseModule(object):
         data = []
         for f in files:
             file = real_file_path[f]
-            if not os.path.isfile(file):
-                continue
             print(f)
-
-            if file.endswith(".xlsx"):
-                # If cached CSV exists, load it to save time
-                csv_file = file + ".csv"
-                if os.path.exists(csv_file):
-                    df = pd.read_csv(csv_file, sep=',')
-                else:
-                    data0 = pd.ExcelFile(file)
-                    df = data0.parse('Sheet1')
-                    df.to_csv(csv_file, sep=',', index=False)
-                    print("saved csv file to {}".format(csv_file))
-            elif file.endswith(".txt"):
-                df = pd.read_csv(file, delimiter=';')
-            elif file.endswith(".csv"):
-                df = pd.read_csv(file, delimiter=',')
-            else:
-                df = None
-            data.append({
-                'filename': f,
-                'df': df,
-            })
+            df = self._read_file(file)
+            if df is not None:
+                data.append({'filename': f, 'df': df})
+        
         print("data: ", len(data))
         return data
+
+    def _read_file(self, filepath):
+        """
+        Read a single file and return as DataFrame.
+        
+        Args:
+            filepath (str): Path to the file
+            
+        Returns:
+            DataFrame or None if file format not supported
+        """
+        ext = os.path.splitext(filepath)[1].lower()
+        
+        if ext == '.xlsx':
+            csv_file = filepath + ".csv"
+            if os.path.exists(csv_file):
+                return pd.read_csv(csv_file, sep=',')
+            else:
+                data0 = pd.ExcelFile(filepath)
+                df = data0.parse('Sheet1')
+                df.to_csv(csv_file, sep=',', index=False)
+                print(f"saved csv file to {csv_file}")
+                return df
+        elif ext == '.txt':
+            return pd.read_csv(filepath, delimiter=';')
+        elif ext == '.csv':
+            return pd.read_csv(filepath, delimiter=',')
+        else:
+            return None
 
     def pkl_save(self, data, filename):
         """
