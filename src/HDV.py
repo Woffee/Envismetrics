@@ -52,16 +52,14 @@ Dependencies:
 
 Date: 2025
 """
-import re
 import numpy as np
 import pandas as pd
-import os as os
+import os
 import matplotlib
 import matplotlib.pyplot as plt
 import math
 import json
-from BaseModule import BaseModule
-from sklearn.linear_model import LinearRegression
+from BaseModule import BaseModule, reorder, extract_rpm
 from scipy.ndimage import gaussian_filter
 matplotlib.use('Agg')
 
@@ -142,82 +140,8 @@ def rpm_to_rads(rpm):
         Most physics/engineering formulas involving angular motion
         require radians/sec as standard SI unit.
     """
-    rps = rpm / 60              # Convert RPM to RPS (revolutions per second)
-    rad_per_sec = 2 * math.pi * rps  # Convert to radians/second
-    return rad_per_sec
+    return 2 * math.pi * rpm / 60
 
-
-def reorder(filename):
-    """
-    WHAT:
-        Extract an integer RPM value from a filename string (e.g., 'test_500rpm.xlsx').
-
-    INPUT:
-        filename : str
-            The name of the file containing an RPM tag like '1000rpm'.
-
-    OUTPUT:
-        rpm : int
-            Extracted RPM as integer, or -1 if not found.
-
-    WHY:
-        Used to numerically sort or organize files based on RPM value.
-        Returns -1 for filenames without valid RPM to handle edge cases safely.
-    """
-    match = re.search(r'(\d+)rpm', filename)
-    if match:
-        return int(match.group(1))  # Extract numeric portion of 'xxxrpm'
-    else:
-        return -1  # Fallback value when RPM is missing
-
-
-def extract_rpm(filename):
-    """
-    WHAT:
-        Extract the string label (e.g., '1200rpm') from the filename for labeling purposes.
-
-    INPUT:
-        filename : str
-            Filename including RPM tag, like 'data_1200rpm.txt'.
-
-    OUTPUT:
-        rpm_label : str or None
-            The full RPM label (e.g., '1200rpm') or None if not found.
-
-    WHY:
-        Useful for adding readable RPM tags to plots, legends, logs, etc.
-        Uses a regex pattern that works with or without underscores before the RPM.
-    """
-    pattern = r'(?:^|_)(\d+rpm)\.'  # Matches 'xxxrpm.' optionally preceded by underscore or start
-    match = re.search(pattern, filename)
-    if match:
-        return match.group(1)
-    else:
-        return None
-
-
-def check_files(files):
-    """
-    WHAT:
-        Verify that all files in the list have supported extensions (.xlsx or .txt).
-
-    INPUT:
-        files : list of str
-            List of filenames to validate.
-
-    OUTPUT:
-        is_valid : bool
-            True if all files are .xlsx or .txt; False otherwise.
-
-    WHY:
-        Prevents downstream processing errors by filtering out unsupported file types.
-        Acts as an early safeguard during batch processing.
-    """
-    for f in files:
-        ext = f.split('.')[-1].lower()  # Extract file extension
-        if ext not in ['xlsx', 'txt']:
-            return False  # Invalid file type found
-    return True  # All files passed
 
 
 class HDV(BaseModule):
@@ -267,22 +191,17 @@ class HDV(BaseModule):
         files = []
         real_file_path = {}
         for info in info_list:
-            # 'filename' is the display name (used as key), 'existed_filename' is the actual path
             f = info['filename']
             file = info['existed_filename']
-            if not os.path.isfile(file):
-                continue  # Skip missing files
-            files.append(f)
-            real_file_path[f] = file
+            if os.path.isfile(file):
+                files.append(f)
+                real_file_path[f] = file
 
-        # Sort files numerically by RPM extracted from filename
         files = sorted(files, key=reorder)
 
         data = {}
         for f in files:
             file = real_file_path[f]
-            if not os.path.isfile(file):
-                continue
             print(f)
 
             rpm = extract_rpm(f)
@@ -290,20 +209,8 @@ class HDV(BaseModule):
                 continue
             print(rpm)
 
-            if file.endswith(".xlsx"):
-                csv_file = file + ".csv"
-                if os.path.exists(csv_file):
-                    # Use cached CSV version if available
-                    data[rpm] = pd.read_csv(csv_file, sep=',')
-                else:
-                    # Parse Excel file and cache as CSV
-                    data0 = pd.ExcelFile(file)
-                    data[rpm] = data0.parse('Sheet1')
-                    data[rpm].to_csv(csv_file, sep=',', index=False)
-                    print("saved csv file to {}".format(csv_file))
-            elif file.endswith(".txt"):
-                # .txt files are assumed to be semicolon-separated
-                df = pd.read_csv(file, delimiter=';')
+            df = self._read_file(file)
+            if df is not None:
                 data[rpm] = df
 
         print("data: ", len(data))
@@ -436,28 +343,25 @@ class HDV(BaseModule):
         """
 
         # Parse electrochemical input parameters
-        input_n = int(all_params['input_N'])          # number of electrons (n)
-        input_v = float(all_params['input_V'])        # kinematic viscosity (ν)
-        input_c = float(all_params['input_C'])        # analyte concentration (mol/cm^3)
+        input_n = int(all_params['input_N'])
+        input_v = float(all_params['input_V'])
+        input_c = float(all_params['input_C'])
 
         # Extract and parse potential range string into float bounds
         input_range = all_params['input_range'].replace("(", "").replace(")", "").split(",")
-        n_points = int(all_params['input_n_points'])  # number of potential points to analyze
+        n_points = int(all_params['input_n_points'])
 
         # Define potential window
         start_value = float(input_range[0])
         end_value = float(input_range[1])
 
         # Constants for electrode geometry and calculation
-        n = input_n
         relectrode = 0.15  # Radius of RDE electrode (cm)
         print('electrode Radius is :', relectrode, 'cm')
         A = np.pi * (relectrode ** 2)  # Electrode area (cm²)
         print('surface area is :', A, 'cm²')
-        v = input_v
-        C = input_c
 
-        Levich_plotshow_data = pd.DataFrame()  # Stores combined w^0.5 and current data
+        Levich_plotshow_data = pd.DataFrame()
 
         # Re-read raw data internally (ignores passed-in `data`)
         data = self.read_data()
@@ -537,7 +441,7 @@ class HDV(BaseModule):
             # Estimate diffusion coefficient D from Levich slope
             B = np.abs(Levich_slope_i)
             F = 96485.3321  # Faraday constant (C/mol)
-            D23 = B / (0.62 * n * F * A * (v ** -(1 / 6)) * C)
+            D23 = B / (0.62 * input_n * F * A * (input_v ** -(1 / 6)) * input_c)
             D_i = D23 ** (3 / 2)
             D.append(D_i)
 
@@ -590,26 +494,23 @@ class HDV(BaseModule):
             helping to visualize how transport properties evolve across a potential sweep.
         """
         # === Parse user input parameters ===
-        input_n = int(all_params['input_N'])       # Number of electrons transferred
-        input_v = float(all_params['input_V'])     # Kinematic viscosity
-        input_c = float(all_params['input_C'])     # Reactant concentration
+        input_n = int(all_params['input_N'])
+        input_v = float(all_params['input_V'])
+        input_c = float(all_params['input_C'])
 
         # Parse potential range from string to float
         input_range = all_params['input_range'].replace("(", "").replace(")", "").split(",")
-        interval = int(all_params['input_interval'])    # Sampling interval (e.g., every 3rd point)
+        interval = int(all_params['input_interval'])
 
         # Define bounds of potential range
         start_value = float(input_range[0])
         end_value = float(input_range[1])
 
         # === Define constants ===
-        n = input_n
         relectrode = 0.15  # Radius of RDE electrode (cm)
         print('electrode Radius is :', relectrode, 'cm')
         A = np.pi * (relectrode ** 2)  # Electrode area (cm^2)
         print('surface area is :', A, 'cm²')
-        v = input_v
-        C = input_c
 
         # === Load data ===
         data = self.read_data()
@@ -679,7 +580,7 @@ class HDV(BaseModule):
         Levich_slope = np.array(Levich_slope)
         B = np.abs(Levich_slope)
         F = 96485.3321  # Faraday constant
-        D23 = B / (0.62 * n * F * A * (v ** -(1 / 6)) * C)
+        D23 = B / (0.62 * input_n * F * A * (input_v ** -(1 / 6)) * input_c)
         D = D23 ** (3 / 2)
 
         # === Plot B and D vs potential on dual Y-axes ===
@@ -785,13 +686,10 @@ class HDV(BaseModule):
         start_value = float(input_range[0])
         end_value = float(input_range[1])
 
-        n = input_n
         relectrode = 0.15  # RDE radius (cm)
         print('electrode Radius is :', relectrode, 'cm')
         A = np.pi * (relectrode ** 2)
         print('surface area is :', A, 'cm²')
-        v = input_v
-        C = input_c
 
         # === Read experimental data ===
         Koutecky_Levich_plotshow_data = pd.DataFrame()
@@ -869,7 +767,7 @@ class HDV(BaseModule):
             KL_slope = slope_i ** -1
             B = np.abs(KL_slope)
             F = 96485.3321
-            D23 = B / (0.62 * n * F * A * (v ** -(1 / 6)) * C)
+            D23 = B / (0.62 * input_n * F * A * (input_v ** -(1 / 6)) * input_c)
             D_i = D23 ** (3 / 2)
             D.append(D_i)
 
@@ -933,13 +831,10 @@ class HDV(BaseModule):
         end_value = float(input_range[1])
 
         # === Physical constants ===
-        n = input_n
         relectrode = 0.15  # cm, radius of rotating electrode
         print('electrode Radius is :', relectrode, 'cm')
         A = np.pi * (relectrode ** 2)
         print('surface area is :', A, 'cm²')
-        v = input_v
-        C = input_c
 
         # === Read data and extract potential axis ===
         data = self.read_data()
@@ -1003,7 +898,7 @@ class HDV(BaseModule):
         KL_slope = np.array(Koutecky_Levich_slope) ** -1
         B = np.abs(KL_slope)
         F = 96485.3321
-        D23 = B / (0.62 * n * F * A * (v ** -(1 / 6)) * C)
+        D23 = B / (0.62 * input_n * F * A * (input_v ** -(1 / 6)) * input_c)
         D = D23 ** (3 / 2)
 
         # === Dual-axis plot: B and D vs potential ===
