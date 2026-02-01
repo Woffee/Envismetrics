@@ -88,11 +88,7 @@ class CA(BaseModule):
     def check_columns(self, data):
         """
         Validate that all required columns are present in the input DataFrames.
-
-        Required columns:
-            - 'Time (s)': Time axis in seconds.
-            - 'WE(1).Current (A)': Working electrode current in amperes.
-            - 'WE(1).Potential (V)': Working electrode potential in volts.
+        Uses intelligent column detection to support multiple file formats.
 
         Args:
             data (list): List of dictionaries, each containing a 'df' key with a pandas DataFrame.
@@ -101,13 +97,19 @@ class CA(BaseModule):
             str: Empty string if all columns are present; otherwise, returns an error message
                  listing all missing columns.
         """
-        required_cols = ['Time (s)', 'WE(1).Current (A)', 'WE(1).Potential (V)']
         missing_cols = set()
         for d in data:
             df = d['df']
-            for col in required_cols:
-                if col not in df.columns:
-                    missing_cols.add(col)
+            detected = self.detect_column_names(df)
+            
+            # Check if essential columns were detected
+            if detected['time'] is None:
+                missing_cols.add('Time column (e.g., "Time (s)" or "time/s")')
+            if detected['current'] is None:
+                missing_cols.add('Current column (e.g., "WE(1).Current (A)" or "current/A")')
+            if detected['potential'] is None:
+                missing_cols.add('Potential column (e.g., "WE(1).Potential (V)" or "potential/V")')
+        
         return f"error: Missing columns: {', '.join(missing_cols)}" if missing_cols else ''
 
     def step1(self):
@@ -146,25 +148,23 @@ class CA(BaseModule):
                     plt.plot(df['Time (s)'], df['WE(1).Potential (V)'], 
                             linestyle='-', linewidth=1, color='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Applied potential/V')
                 plt.title('A', loc='left', bbox=dict(facecolor='white', edgecolor='black'))
-                to_file1 = os.path.join(self.datapath, "CA_form1_p1.png")
-                plt.savefig(to_file1)
-                plt.close()
+                to_file1 = self.save_plot("CA_form1_p1.png", 
+                                         xlabel='time/s', 
+                                         ylabel='Applied potential/V',
+                                         legend=False)
 
                 # Plot B: Current vs Time
                 for d in data:
                     df = d['df']
                     plt.scatter(df['Time (s)'], df['WE(1).Current (A)'], s=1, c='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Current/A')
                 plt.title('B', loc='right', bbox=dict(facecolor='white', edgecolor='black'))
                 plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-                to_file2 = os.path.join(self.datapath, "CA_form1_p2.png")
-                plt.savefig(to_file2)
-                plt.close()
+                to_file2 = self.save_plot("CA_form1_p2.png",
+                                         xlabel='time/s',
+                                         ylabel='Current/A',
+                                         legend=False)
 
                 todata['CA']['form1'] = {
                     'status': 'done',

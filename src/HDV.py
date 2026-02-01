@@ -250,15 +250,10 @@ class HDV(BaseModule):
             I = df['WE(1).Current (A)']       # Extract current column
             print("length of E:", len(E))
             plt.scatter(E, I, label=rpm, s=1)  # Scatter plot per RPM
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        plt.legend()
-
-        # Save raw scatter plot
-        to_file1 = os.path.join(self.datapath, "step1_p1.png")
-        plt.savefig(to_file1)
-        plt.close()
+        to_file1 = self.save_plot("step1_p1.png",
+                                 xlabel='Applied potential/V',
+                                 ylabel='Current/A')
 
         # ---- Figure 2: Smoothed current (Gaussian filter) ----
         combined_data = pd.DataFrame()  # Container for all RPM columns (side-by-side)
@@ -279,15 +274,10 @@ class HDV(BaseModule):
             })
             combined_data = pd.concat([combined_data, rpm_data], axis=1)
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
         plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-        plt.legend()
-
-        # Save smoothed plot
-        to_file2 = os.path.join(self.datapath, "step1_p2.png")
-        plt.savefig(to_file2)
-        plt.close()
+        to_file2 = self.save_plot("step1_p2.png",
+                                 xlabel='Applied potential/V',
+                                 ylabel='Current/A')
 
         # ---- Save results ----
         data = self.res_data

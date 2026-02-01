@@ -56,18 +56,15 @@ Dependencies:
 
 
 import os
+import json
+import math
+import ast
+from datetime import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
-from sklearn.linear_model import LinearRegression
-import math
-import re
-import json
-from config import *
-from BaseModule import BaseModule
-import ast
-from datetime import datetime
+from BaseModule import BaseModule, reorder, extract_rpm
 
 # Define a color palette for plotting (10 distinct colors)
 colors = [
@@ -86,20 +83,17 @@ colors = [
 
 def Search_scan_rate(filename):
     """
-    Extract scan rate (e.g. 10 from "DMAB_10mVs.csv") from filename.
-
+    Extract scan rate from filename (e.g. 10 from "DMAB_10mVs.csv").
+    
     Parameters:
         filename (str): input filename
-
+        
     Returns:
         int: scan rate in mV/s or -1 if not found
     """
-    # Look for digits followed by 'mVs' using regex
+    import re
     match = re.search(r'(\d+)mVs', filename)
-    if match:
-        return int(match.group(1))  # Convert matched digits to integer
-    else:
-        return -1  # Return -1 if no match is found (e.g., malformed filename)
+    return int(match.group(1)) if match else -1
 
 
 
@@ -127,149 +121,32 @@ def read_auto_lab_file(file):
 def create_file_template_CV(file_name):
     """
     Replace scan rate numbers in filename with a '%d' placeholder.
-
-    This utility enables automated batch processing across multiple scan rates.
-
+    
     Parameters:
         file_name (str): Original filename (e.g., 'DMAB_10mVs.xlsx')
-
+        
     Returns:
         str: Template string with placeholder (e.g., 'DMAB_%dmVs.xlsx')
     """
-    pattern = r'(\d+)mVs'  # Match any numeric scan rate (e.g., '10mVs')
-    template = re.sub(pattern, '%dmVs', file_name)  # Replace with printf-style token
-    return template
+    import re
+    return re.sub(r'(\d+)mVs', '%dmVs', file_name)
 
 
 def make_color_darker(color, factor):
     """
-    Darken a given hex color by a certain factor.
-
+    Darken a hex color by a factor.
+    
     Parameters:
-        color (str): Original hex color (e.g., '#1f77b4').
-        factor (float): Darkening factor (e.g., 0.8 for 20% darker).
-
+        color (str): Original hex color (e.g., '#1f77b4')
+        factor (float): Darkening factor (e.g., 0.8 for 20% darker)
+        
     Returns:
-        str: New hex color string.
+        str: New hex color string
     """
-    # Parse the R, G, B components from the hex string
     r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
-
-    # Apply scaling factor to darken each channel
-    # Ensure the result stays within [0, 255] using max()
-    r = max(0, int(r * factor))
-    g = max(0, int(g * factor))
-    b = max(0, int(b * factor))
-
-    # Return the modified color in hex format (2-digit padded lowercase hex)
+    r, g, b = max(0, int(r * factor)), max(0, int(g * factor)), max(0, int(b * factor))
     return f'#{r:02x}{g:02x}{b:02x}'
 
-
-def find_max(x, y, start, end):
-    """
-    Find the (x, y) point with the maximum y-value in a given x range.
-
-    Parameters:
-        x (list or np.array): x-values
-        y (list or np.array): y-values
-        start (float): minimum x value
-        end (float): maximum x value
-
-    Returns:
-        tuple: (x, y) position of max y in the interval [start, end]
-    """
-    ma = -1       # Initialize max y-value; assumes non-negative current/potential
-    xx = -1       # Placeholder for x-coordinate at max y
-    yy = -1       # Placeholder for max y
-
-    # Iterate through all points to find max y within specified x-range
-    for i in range(len(x)):
-        if start <= x[i] <= end:
-            if y[i] > ma:
-                ma = y[i]
-                xx = x[i]
-                yy = y[i]
-
-    # Return coordinates corresponding to max y within range
-    return xx, yy
-
-
-def find_min(x, y, start, end):
-    """
-    Find the (x, y) point with the minimum y-value in a given x range.
-
-    Parameters:
-        x (list or np.array): x-values
-        y (list or np.array): y-values
-        start (float): minimum x value
-        end (float): maximum x value
-
-    Returns:
-        tuple: (x, y) position of min y in the interval [start, end]
-    """
-    mi = 10000  # Sentinel value for initialization; assumes y-values < 10^4
-    xx = -1     # Placeholder for x at min y
-    yy = -1     # Placeholder for min y
-
-    # Iterate through all points and track the minimum y-value within x-range
-    for i in range(len(x)):
-        if start <= x[i] <= end:
-            if y[i] < mi:
-                mi = y[i]
-                xx = x[i]
-                yy = y[i]
-
-    return xx, yy
-
-
-def find_y(x, y, xi):
-    """
-    Find the y-value corresponding to the x-value xi in (x, y) data.
-
-    Parameters:
-        x (list or np.array): x-values
-        y (list or np.array): y-values
-        xi (float): target x
-
-    Returns:
-        float: corresponding y-value or -1 if not found
-    """
-    # Perform exact-match lookup on x-values
-    for i in range(len(x)):
-        if x[i] == xi:
-            return y[i]
-
-    # Return fallback if xi is not present in x (e.g., due to float mismatch)
-    return -1
-
-
-def extract_peak_range(str_peak_range):
-    """
-    Parse a string containing peak ranges into a list of (start, end) float tuples.
-
-    Example input: '((-1.0, -0.5),(0.0, 0.2))'
-    Returns: [(-1.0, -0.5), (0.0, 0.2)]
-
-    Parameters:
-        str_peak_range (str): String representing peak regions in format '((a, b),(c, d))'
-
-    Returns:
-        list of tuple: List of (start, end) float tuples
-    """
-    res = []
-
-    # Remove whitespace and split the string into individual (a, b) chunks
-    arr = str_peak_range.strip().replace(" ", "").split('),(')
-
-    for a in arr:
-        # Clean leading/trailing parentheses and extract start/end values
-        start = a.split(",")[0].replace("(", "").replace(")", "").strip()
-        end = a.split(",")[1].replace("(", "").replace(")", "").strip()
-
-        # Convert string values to floats and append as tuple
-        res.append((float(start), float(end)))
-
-    return res
 
 def separater(x, y, left, right):
     """
@@ -316,112 +193,6 @@ def separater(x, y, left, right):
     return upperx, lowerx, uppery, lowery
 
 
-def reorder(filename):
-    """
-    Extract scan rate from filename for sorting purposes.
-
-    Parameters:
-        filename (str): Input filename (e.g., 'data_50mVs.csv')
-
-    Returns:
-        int: Scan rate (e.g., 50), or -1 if pattern not found
-    """
-    # Match integer followed by 'mVs' to identify scan rate
-    match = re.search(r'(\d+)mVs', filename)
-
-    # Return scan rate as integer for use in sorting or indexing
-    return int(match.group(1)) if match else -1
-
-
-def filter_files(files):
-    """
-    Filter a list of filenames to only include files with allowed extensions.
-
-    Parameters:
-        files (list of str): List of filenames
-
-    Returns:
-        list of str: Valid filenames with extensions in ALLOWED_EXTENSIONS
-    """
-    res = []
-
-    for f in files:
-        # Extract file extension and convert to lowercase for case-insensitive match
-        ext = f.split('.')[-1].lower()
-
-        # Retain only files with extensions in the allowed list (e.g., ['csv', 'xlsx', 'txt'])
-        if ext in ALLOWED_EXTENSIONS:
-            res.append(f)
-
-    return res
-
-
-def special_log(a_list):
-    """
-    Custom log10 transformation for an array:
-    - log10(x) if x > 0
-    - log10(-x) if x < 0
-    - 0 if x == 0 (user-defined convention to avoid -inf)
-
-    This function is useful for visualizing data with both positive and negative values
-    on a symmetric logarithmic scale (e.g., electrochemical current response).
-
-    Parameters:
-        a_list (np.array): Input numeric array
-
-    Returns:
-        np.array: Transformed array with log10 applied per element
-    """
-    a_list_special_log = np.zeros_like(a_list)  # Initialize output array with zeros
-
-    for idx, value in enumerate(a_list):
-        if value > 0:
-            a_list_special_log[idx] = np.log10(value)
-        elif value < 0:
-            a_list_special_log[idx] = np.log10(-value)
-        else:
-            # Avoid math domain error; define log(0) as 0 for plotting consistency
-            a_list_special_log[idx] = 0
-
-    return a_list_special_log
-
-def special_ln(a_list):
-    """
-    Custom natural log transformation for an array:
-    - ln(x) if x > 0
-    - ln(-x) if x < 0
-    - 0 if x == 0
-
-    This function enables visualization or transformation of data containing both
-    positive and negative values using a symmetric ln-scale.
-    The value 0 is mapped to 0 explicitly to avoid math domain errors.
-
-    Parameters:
-        a_list (np.array): Input numeric array
-
-    Returns:
-        np.array: Transformed array with ln applied element-wise
-    """
-    # Initialize the output array with zeros, same shape and type as input
-    # This avoids preallocation overhead and ensures correct dtype handling
-    a_list_special_ln = np.zeros_like(a_list)
-
-    # Iterate through each element and apply symmetric natural logarithm
-    for idx, value in enumerate(a_list):
-        if value > 0:
-            # Standard natural log for positive values
-            a_list_special_ln[idx] = np.log(value)
-        elif value < 0:
-            # Reflect negative values to apply log transform (abs),
-            # useful for bipolar data such as current responses in CV
-            a_list_special_ln[idx] = np.log(-value)
-        else:
-            # For zero input, avoid ln(0) = -inf by assigning 0 as a safe default
-            # This is a practical convention for visualization (e.g., symmetric log plots)
-            a_list_special_ln[idx] = 0
-
-    return a_list_special_ln
-
 class CV(BaseModule):
     """
     CV Module class for handling cyclic voltammetry (CV) data processing.
@@ -464,76 +235,38 @@ class CV(BaseModule):
     def read_data(self):
         """
         Read CV data files described in a JSON metadata list.
-
-        The metadata must include:
-            - 'filename': a user-defined or display name (used for sorting)
-            - 'existed_filename': full resolved path on disk
-
-        Supported input formats:
-            - .xlsx: Excel files (auto-converted to .csv for caching)
-            - .csv: Comma-separated plain text
-            - .txt: Semicolon-delimited plain text (from EC-Lab)
-
+        
         Returns:
             dict: Mapping of scan rate (int, in mV/s) → pandas DataFrame of CV data
         """
-        # Load file metadata list from JSON file
         with open(self.files_info, 'r') as f:
             info_list = json.loads(f.read())
 
-        files = []              # Stores logical filenames (used for sorting)
-        real_file_path = {}     # Maps logical name to actual file path
-
+        files = []
+        real_file_path = {}
         for info in info_list:
-            f = info['filename']                  # Logical file name (e.g., for display)
-            file = info['existed_filename']       # Actual full path to file
+            f = info['filename']
+            file = info['existed_filename']
+            if os.path.isfile(file):
+                files.append(f)
+                real_file_path[f] = file
 
-            if not os.path.isfile(file):          # Skip missing or invalid paths
-                continue
-
-            files.append(f)
-            real_file_path[f] = file
-
-        # Sort filenames by scan rate extracted from string (e.g., '20mVs')
         files = sorted(files, key=reorder)
         print("len of files: ", len(files), self.files_info)
 
-        data = {}  # Final output: mapping scan rate → DataFrame
-
+        data = {}
         for f in files:
             file = real_file_path[f]
-
-            if not os.path.isfile(file):
-                continue  # Skip if file was deleted or moved after JSON load
-
             print("filename:", f)
 
-            rpm = Search_scan_rate(f)  # Extract scan rate from filename
-            if rpm is None:
-                continue  # Skip if scan rate is not found (invalid naming)
+            scan_rate = Search_scan_rate(f)
+            if scan_rate is None:
+                continue
+            print("scan_rate:", scan_rate)
 
-            print("rpm:", rpm)
-
-            # === File format handling ===
-            if file.endswith(".xlsx"):
-                # Try reading from CSV cache to speed up repeated reads
-                csv_file = file + ".csv"
-
-                if os.path.exists(csv_file):
-                    data[rpm] = pd.read_csv(csv_file, delimiter=',', dtype={'Current range': str})
-                else:
-                    # Read from Excel and cache as CSV
-                    data0 = pd.ExcelFile(file)
-                    data[rpm] = data0.parse('Sheet1')
-                    data[rpm].to_csv(csv_file, sep=',', index=False)
-                    print("saved csv file to {}".format(csv_file))
-
-            elif file.endswith(".txt"):
-                # Assume EC-Lab format (.txt) with semicolon separator
-                data[rpm] = pd.read_csv(file, delimiter=';', dtype={'Current range': str})
-
-            elif file.endswith(".csv"):
-                data[rpm] = pd.read_csv(file, delimiter=',', dtype={'Current range': str})
+            df = self._read_file(file)
+            if df is not None:
+                data[scan_rate] = df
 
         print("data: ", len(data))
         return data
@@ -541,30 +274,22 @@ class CV(BaseModule):
     def check_columns(self, data):
         """
         Validate that all expected columns exist in each DataFrame.
-
-        Expected columns:
-            - 'WE(1).Current (A)'
-            - 'WE(1).Potential (V)'
-            - 'Scan' (cycle number)
-
+        
         Parameters:
             data (dict): Dictionary mapping scan rates to DataFrames
-
+            
         Returns:
             str: Empty if valid; otherwise an error string listing missing columns
         """
-        cols = ['WE(1).Current (A)', 'WE(1).Potential (V)', 'Scan']
-        missing_cols = []
-
+        required_cols = ['WE(1).Current (A)', 'WE(1).Potential (V)', 'Scan']
+        missing_cols = set()
+        
         for scan_rate, df in data.items():
-            for col in cols:
+            for col in required_cols:
                 if col not in df.columns:
-                    missing_cols.append(col)
-
-        if len(missing_cols) > 0:
-            return "error: Missing columns: " + ", ".join(missing_cols)
-
-        return ''
+                    missing_cols.add(col)
+        
+        return f"error: Missing columns: {', '.join(missing_cols)}" if missing_cols else ''
 
 
     def start1_figure(self, data, apply_sigma=False, all_params={}):
@@ -614,19 +339,11 @@ class CV(BaseModule):
             # Scatter plot per scan rate
             plt.scatter(E, I, label=scan_rate, s=1)
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
-        plt.legend()
-
-        # Determine output filename based on smoothing flag
-        if apply_sigma:
-            to_file1 = os.path.join(self.savepath, "form1_sigma{}.png".format(sigma))
-        else:
-            to_file1 = os.path.join(self.savepath, "form1_original.png")
-
-        # Save first figure (selected cycle only)
-        plt.savefig(to_file1)
-        plt.close()
+        to_file1 = self.save_plot(
+            "form1_sigma{}.png".format(sigma) if apply_sigma else "form1_original.png",
+            xlabel='Applied potential/V',
+            ylabel='Current/A'
+        )
 
         # === Second plot: full CV data (all cycles) ===
         for scan_rate, df0 in data.items():
@@ -634,13 +351,9 @@ class CV(BaseModule):
             I = df0['WE(1).Current (A)']
             plt.scatter(E, I, label=scan_rate, s=1)
 
-        plt.xlabel('Applied potential/V')
-        plt.ylabel('Current/A')
-        plt.legend()
-
-        to_file3 = os.path.join(self.savepath, "form1_cycle.png")
-        plt.savefig(to_file3)
-        plt.close()
+        to_file3 = self.save_plot("form1_cycle.png",
+                                 xlabel='Applied potential/V',
+                                 ylabel='Current/A')
 
         return to_file1, to_file3
 
@@ -779,16 +492,11 @@ class CV(BaseModule):
 
         for jj, df0 in data.items():
             j = int(jj.replace("mVs", ""))  # Extract scan rate as integer
-            name = str(j) + "mV"            # Label for plotting/debug
             num = j
 
-            # Temporary lists to store per-cycle peaks for this scan rate
-            Ea1j = []
-            Ec1j = []
-            Ia1j = []
-            Ic1j = []
-
             # Analyze scan cycles 3 through 11
+            # Note: Cycles 1-2 are typically unstable and excluded from analysis
+            # Cycle 3-11 represents stable, reproducible CV behavior
             for i in range(3, 12):
                 df = df0[df0['Scan'] == i]
                 Ui = np.array(df['WE(1).Potential (V)'])
@@ -822,18 +530,6 @@ class CV(BaseModule):
                 DelE01.append(DelE01i)
                 Ef1.append(Ef1i)
                 Scan_Rate1.append(num)
-
-                # Also store per-cycle peaks for visualization if needed
-                Ea1j.append(top_x1)
-                Ec1j.append(bottom_x1)
-                Ia1j.append(find_y(upperU, smoothed_upperI, top_x1))
-                Ic1j.append(find_y(lowerU, smoothed_lowerI, bottom_x1))
-
-                # Debug/plotting (commented out):
-                # plt.scatter(upperU, smoothed_upperI, s=2, c='#1f77b4')
-                # plt.scatter(lowerU, smoothed_lowerI, s=2, c='#ff7f0e')
-                # plt.scatter(Ea1j, Ia1j, s=10, c='r')
-                # plt.scatter(Ec1j, Ic1j, s=10, c='r')
 
             # Return all results as tuple of lists
             return (Ef1, DelE01, Ea1, Ec1, Ia1, Ic1, Ic1, Scan_Rate1)

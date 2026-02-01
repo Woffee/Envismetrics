@@ -244,3 +244,90 @@ class BaseModule(object):
         with open(full_filename, 'rb') as f:
             loaded_data = pickle.load(f)
         return loaded_data
+
+    def save_plot(self, filename, xlabel='', ylabel='', title='', legend=True):
+        """
+        Save current matplotlib plot with common settings.
+        
+        Args:
+            filename (str): Output filename (will be saved in self.datapath)
+            xlabel (str): X-axis label
+            ylabel (str): Y-axis label
+            title (str): Plot title
+            legend (bool): Whether to show legend
+            
+        Returns:
+            str: Full path to saved file
+        """
+        import matplotlib.pyplot as plt
+        
+        if xlabel:
+            plt.xlabel(xlabel)
+        if ylabel:
+            plt.ylabel(ylabel)
+        if title:
+            plt.title(title)
+        if legend:
+            plt.legend()
+        
+        filepath = os.path.join(self.datapath, filename)
+        plt.savefig(filepath)
+        plt.close()
+        return filepath
+
+    def detect_column_names(self, df):
+        """
+        Detect electrochemical data column names from DataFrame.
+        
+        Supports multiple naming conventions:
+        - Autolab: 'WE(1).Potential (V)', 'WE(1).Current (A)'
+        - EC-Lab: columns containing '/V', '/A'
+        - Generic: 'Potential', 'Current', 'Voltage'
+        
+        Args:
+            df (pd.DataFrame): Input DataFrame
+            
+        Returns:
+            dict: {'potential': col_name, 'current': col_name, 'time': col_name}
+                  Returns None for columns not found
+        """
+        cols = df.columns.tolist()
+        result = {'potential': None, 'current': None, 'time': None}
+        
+        # Detect potential column
+        for col in cols:
+            col_lower = col.lower()
+            if 'potential' in col_lower and '/v' in col_lower:
+                result['potential'] = col
+                break
+            elif 'we(1).potential' in col_lower:
+                result['potential'] = col
+                break
+            elif col_lower in ['potential (v)', 'voltage (v)', 'e (v)']:
+                result['potential'] = col
+                break
+        
+        # Detect current column
+        for col in cols:
+            col_lower = col.lower()
+            if 'current' in col_lower and '/a' in col_lower:
+                result['current'] = col
+                break
+            elif 'we(1).current' in col_lower:
+                result['current'] = col
+                break
+            elif col_lower in ['current (a)', 'i (a)']:
+                result['current'] = col
+                break
+        
+        # Detect time column
+        for col in cols:
+            col_lower = col.lower()
+            if 'time' in col_lower and '/s' in col_lower:
+                result['time'] = col
+                break
+            elif col_lower in ['time (s)', 't (s)']:
+                result['time'] = col
+                break
+        
+        return result
