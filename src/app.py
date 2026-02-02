@@ -1091,7 +1091,7 @@ def uploaded_file2(version, filename):
     Returns:
         Flask Response: Sends the requested file to the browser from a versioned subdirectory.
     """
-    return send_from_directory(os.path.join(BASE_DIR, f'../outputs/{version}'), filename)
+    return send_from_directory(os.path.join('outputs', version), filename)
 
 
 @app.route('/files/<filename>')
