@@ -204,7 +204,16 @@ class BaseModule(object):
             if os.path.exists(csv_file):
                 return pd.read_csv(csv_file, sep=',')
             else:
-                data0 = pd.ExcelFile(filepath)
+                try:
+                    # Try openpyxl engine first (for .xlsx files)
+                    data0 = pd.ExcelFile(filepath, engine='openpyxl')
+                except Exception:
+                    try:
+                        # Fallback to xlrd for older .xls files
+                        data0 = pd.ExcelFile(filepath, engine='xlrd')
+                    except Exception as e:
+                        print(f"Error reading Excel file {filepath}: {e}")
+                        return None
                 df = data0.parse('Sheet1')
                 df.to_csv(csv_file, sep=',', index=False)
                 print(f"saved csv file to {csv_file}")
