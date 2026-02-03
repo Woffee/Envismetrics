@@ -64,6 +64,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
+from sklearn.linear_model import LinearRegression
 from BaseModule import BaseModule, reorder, extract_rpm
 
 # Define a color palette for plotting (10 distinct colors)
@@ -146,6 +147,94 @@ def make_color_darker(color, factor):
     r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
     r, g, b = max(0, int(r * factor)), max(0, int(g * factor)), max(0, int(b * factor))
     return f'#{r:02x}{g:02x}{b:02x}'
+
+
+def find_max(x, y, x_start, x_end):
+    """
+    Find the maximum y value within a specified x range.
+
+    Parameters:
+        x: array-like of x values
+        y: array-like of y values
+        x_start: start of search range
+        x_end: end of search range
+
+    Returns:
+        tuple: (x_at_max, max_y)
+    """
+    mask = (np.array(x) >= x_start) & (np.array(x) <= x_end)
+    y_filtered = np.array(y)[mask]
+    x_filtered = np.array(x)[mask]
+    if len(y_filtered) == 0:
+        return (x_start, 0)
+    max_idx = np.argmax(y_filtered)
+    return (x_filtered[max_idx], y_filtered[max_idx])
+
+
+def find_min(x, y, x_start, x_end):
+    """
+    Find the minimum y value within a specified x range.
+
+    Parameters:
+        x: array-like of x values
+        y: array-like of y values
+        x_start: start of search range
+        x_end: end of search range
+
+    Returns:
+        tuple: (x_at_min, min_y)
+    """
+    mask = (np.array(x) >= x_start) & (np.array(x) <= x_end)
+    y_filtered = np.array(y)[mask]
+    x_filtered = np.array(x)[mask]
+    if len(y_filtered) == 0:
+        return (x_start, 0)
+    min_idx = np.argmin(y_filtered)
+    return (x_filtered[min_idx], y_filtered[min_idx])
+
+
+def find_y(x, y, target_x):
+    """
+    Find y value at a specific x value (or closest match).
+
+    Parameters:
+        x: array-like of x values
+        y: array-like of y values
+        target_x: x value to find
+
+    Returns:
+        float: y value at target_x
+    """
+    x_arr = np.array(x)
+    y_arr = np.array(y)
+    idx = np.argmin(np.abs(x_arr - target_x))
+    return y_arr[idx]
+
+
+def special_log(arr):
+    """
+    Apply log10 to array, handling negative values.
+
+    Parameters:
+        arr: array-like of values
+
+    Returns:
+        numpy array: log10 of absolute values
+    """
+    return np.log10(np.abs(arr) + 1e-12)
+
+
+def special_ln(arr):
+    """
+    Apply natural log to array, handling negative values.
+
+    Parameters:
+        arr: array-like of values
+
+    Returns:
+        numpy array: natural log of absolute values
+    """
+    return np.log(np.abs(arr) + 1e-12)
 
 
 def separater(x, y, left, right):
@@ -266,6 +355,20 @@ class CV(BaseModule):
 
             df = self._read_file(file)
             if df is not None:
+                # Ensure 'Scan' column exists
+                if 'Scan' not in df.columns:
+                    # Try to detect scan/cycle column
+                    scan_col = None
+                    for col in df.columns:
+                        if 'scan' in col.lower() or 'cycle' in col.lower():
+                            scan_col = col
+                            break
+                    if scan_col:
+                        df['Scan'] = df[scan_col]
+                    else:
+                        # If no scan column found, assume single scan and set all to 1
+                        df['Scan'] = 1
+                
                 data[scan_rate] = df
 
         print("data: ", len(data))
@@ -281,15 +384,16 @@ class CV(BaseModule):
         Returns:
             str: Empty if valid; otherwise an error string listing missing columns
         """
-        required_cols = ['WE(1).Current (A)', 'WE(1).Potential (V)', 'Scan']
-        missing_cols = set()
-        
         for scan_rate, df in data.items():
-            for col in required_cols:
-                if col not in df.columns:
-                    missing_cols.add(col)
+            col_names = self.detect_column_names(df)
+            if not col_names['potential']:
+                return f"error: Could not detect potential column in data for scan rate {scan_rate}"
+            if not col_names['current']:
+                return f"error: Could not detect current column in data for scan rate {scan_rate}"
+            if 'Scan' not in df.columns:
+                return f"error: Missing 'Scan' column in data for scan rate {scan_rate}"
         
-        return f"error: Missing columns: {', '.join(missing_cols)}" if missing_cols else ''
+        return ''
 
 
     def start1_figure(self, data, apply_sigma=False, all_params={}):
@@ -315,10 +419,37 @@ class CV(BaseModule):
 
         # === First plot: only the specified scan cycle ===
         for scan_rate, df0 in data.items():
+            # Check available cycles
+            available_cycles = sorted(df0['Scan'].unique())
+            if len(available_cycles) == 0:
+                raise ValueError(f"No scan cycles found in data for scan rate {scan_rate}")
+            
+            # Use requested cycle if available, otherwise use the closest or first available
+            if cycle not in available_cycles:
+                if len(available_cycles) == 1:
+                    actual_cycle = available_cycles[0]
+                else:
+                    # Find closest cycle
+                    actual_cycle = min(available_cycles, key=lambda x: abs(x - cycle))
+                print(f"Warning: Cycle {cycle} not found, using cycle {actual_cycle} instead")
+            else:
+                actual_cycle = cycle
+            
             # Filter only the selected cycle
-            df = df0[df0['Scan'] == cycle]
-            E = df['WE(1).Potential (V)']
-            I = df['WE(1).Current (A)']
+            df = df0[df0['Scan'] == actual_cycle]
+            if len(df) == 0:
+                raise ValueError(f"No data found for cycle {actual_cycle} at scan rate {scan_rate}")
+            
+            # Detect column names
+            col_names = self.detect_column_names(df)
+            if not col_names['potential'] or not col_names['current']:
+                raise ValueError(f"Could not detect potential or current columns in data")
+            
+            E = df[col_names['potential']]
+            I = df[col_names['current']]
+            
+            if len(E) == 0:
+                raise ValueError(f"Empty potential data for cycle {actual_cycle}")
 
             # Split into forward and backward scans using potential direction
             upperE, lowerE, upperI, lowerI = separater(E, I, min(E), max(E))
@@ -347,8 +478,9 @@ class CV(BaseModule):
 
         # === Second plot: full CV data (all cycles) ===
         for scan_rate, df0 in data.items():
-            E = df0['WE(1).Potential (V)']
-            I = df0['WE(1).Current (A)']
+            col_names = self.detect_column_names(df0)
+            E = df0[col_names['potential']]
+            I = df0[col_names['current']]
             plt.scatter(E, I, label=scan_rate, s=1)
 
         to_file3 = self.save_plot("form1_cycle.png",
