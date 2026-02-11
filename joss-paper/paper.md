@@ -13,27 +13,32 @@ authors:
   - name: Wenbo Wang
     orcid: 0000-0002-0784-7509
     affiliation: "2"
+  - name: Dongxiao Yue
+    orcid: 0009-0005-9387-8430
+    affiliation: "3"
   - name: Xinxin Zhou
     orcid: 0009-0001-0960-6688
-    affiliation: "3"
+    affiliation: "4"
   - name: Fuqin Zhou
     orcid: 0009-0000-0342-0033
-    affiliation: "5"
+    affiliation: "6"
   - name: Omowunmi Sadik
     orcid: 0000-0001-8514-0608
     corresponding: true
-    affiliation: "4"
+    affiliation: "5"
 affiliations:
  - name: New Jersey Institute of Technology, Department of Physics
    index: 1
  - name: New Jersey Institute of Technology, Department of Informatics
    index: 2
- - name: Independent Researcher
+ - name: Texas A&M University, Department of Economics
    index: 3
- - name: New Jersey Institute of Technology, Chemistry and Environmental Science
+ - name: Independent Researcher
    index: 4
- - name: New Jersey Institute of Technology, Martin Tuchman School of Management
+ - name: New Jersey Institute of Technology, Chemistry and Environmental Science
    index: 5
+ - name: New Jersey Institute of Technology, Martin Tuchman School of Management
+   index: 6
 
 date: "2024-08-30"
 bibliography: bibliography.bib
