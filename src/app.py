@@ -46,12 +46,21 @@ Then navigate to http://localhost:5000/ in a web browser.
 Date: 2025
 """
 
+import sys
+import os
+
+# Python version check
+if sys.version_info < (3, 10):
+    print("Error: This project requires Python 3.10 or a higher version.")
+    print(f"The current version of Python: {sys.version}")
+    print("Please upgrade the Python version and try again.")
+    sys.exit(1)
+
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, send_from_directory, jsonify, request, redirect, send_file, abort
 import time
 import datetime
 import logging
-import os
 import json
 import configparser
 from datetime import datetime
@@ -64,8 +73,6 @@ from utils import init_logging, check_folders
 import threading
 import traceback
 from CA import CA
-import sys
-import os
 
 # Add the current file's directory to the system path to enable local imports (e.g., config.py, utils.py)
 sys.path.append(os.path.dirname(__file__))
@@ -1084,7 +1091,7 @@ def uploaded_file2(version, filename):
     Returns:
         Flask Response: Sends the requested file to the browser from a versioned subdirectory.
     """
-    return send_from_directory(os.path.join(BASE_DIR, f'../outputs/{version}'), filename)
+    return send_from_directory(os.path.join('outputs', version), filename)
 
 
 @app.route('/files/<filename>')

@@ -7,7 +7,8 @@
     <img src="src/static/imgs/logo.png" alt="Logo"  height="80">
   </a>
   <h3 align="center">Envismetrics</h3>
-  <h6 align="center">http://34.162.1.1:8080<a href="http://34.162.1.1:8080"></a></h6>
+  <h6 align="center">http://1.14.137.123:8083<a href="http://1.14.137.123:8083"></a></h6>
+  <h6 align="center">username：admin password：Alpha@123</h6>
 
 
   <p align="center">
@@ -31,9 +32,11 @@
 
 To run Envismetrics locally, you will need:
 
-- Python 3.8 or higher: [Check here](https://www.python.org/downloads/)
+- **Python 3.10 or higher** (required): [Check here](https://www.python.org/downloads/)
 - Git: [Install Git](https://git-scm.com/)
 - (Optional) Anaconda: [Install Anaconda](https://www.anaconda.com/download)
+
+⚠️ **Important**: This project requires Python 3.10+ due to dependency compatibility (numpy, pandas, etc.). If you're using Python 3.7-3.9, please upgrade your Python version.
 
 To check if Git and Python are installed:
 ```sh
@@ -92,7 +95,7 @@ pip install -r requirements.txt
 ### Alternatively, Anaconda users can create a new environment:
 
 ```sh
-conda create -n envismetrics python=3.9
+conda create -n envismetrics python=3.10
 conda activate envismetrics
 pip install -r requirements.txt
 ```
@@ -119,25 +122,41 @@ The Envismetrics repository is organized as follows:
 
 ```plaintext
 Envismetrics/
-├── app/                    # Web app interface (Flask-based backend logic)
 ├── data/
-│   ├── example_files/      # Example .xlsx files showing required data formats for CV, CA, HDV
-│   └── test_data/          # Full experimental datasets used for testing
-├── src/                    # Core electrochemical analysis modules (CV.py, CA.py, HDV.py, etc.)
-├── tests/                  # Unit tests for validating module functions
-├── static/                 # Static web resources (CSS, JS, images)
-├── templates/              # HTML templates for web UI
-├── paper/
+│   ├── test_data/          # Full experimental datasets used for testing (CV, CA, HDV)
+│   ├── Data_Format.md      # Documentation on supported data formats
+│   ├── readme_data.md      # Data-specific documentation
+│   └── reproducibility_guide.md  # Guide for reproducing analysis results
+├── src/
+│   ├── app.py              # Flask application entry point
+│   ├── CV.py               # Cyclic Voltammetry analysis module
+│   ├── CA.py               # Chronoamperometry analysis module
+│   ├── HDV.py              # Hydrodynamic Voltammetry analysis module
+│   ├── BaseModule.py       # Base class for analysis modules
+│   ├── utils.py            # Utility functions
+│   ├── config.py           # Configuration settings
+│   ├── static/             # Static web resources (CSS, JS, images)
+│   ├── templates/          # HTML templates for web UI
+│   ├── uploads/            # User-uploaded data files (temporary storage)
+│   ├── outputs/            # Generated analysis results and figures
+│   ├── logs/               # Application logs
+│   └── demo/               # Jupyter notebooks demonstrating module usage
+├── tests/
+│   ├── test_CV.py          # Unit tests for CV module
+│   ├── test_CA.py          # Unit tests for CA module
+│   └── test_HDV.py         # Unit tests for HDV module
+├── joss-paper/
 │   ├── paper.md            # JOSS manuscript source
 │   ├── bibliography.bib    # BibTeX-formatted references
 │   └── Image_Set/          # Figures used in the manuscript
-├── LICENSE
-├── README.md
+├── LICENSE.txt
+├── readme.md
 └── requirements.txt        # Python dependencies
 ```
 
-- **`data/example_files/`**: Provides sample `.xlsx` templates to help users format input files correctly (e.g., column headers for potential and current).
 - **`data/test_data/`**: Contains real experimental datasets to test and validate the software functionality.
+- **`src/`**: Core application code including Flask backend, analysis modules, and web interface components.
+- **`tests/`**: Unit tests for validating module functions and ensuring code quality.
 
 
 ### Test data
@@ -150,7 +169,7 @@ The test data is now available in the [`data/test_data`](https://github.com/Woff
 
 When using the online version of Envismetrics, uploaded data is stored temporarily to allow users to revisit their analysis via a unique session link. For example:
 
-`http://34.162.1.1:8080/step_methods/version_0627_040023?step=2`
+`http://1.14.137.123:8083/step_methods/version_0627_040023?step=2`
 
 This link is automatically generated after uploading data and can be bookmarked for future access.
 

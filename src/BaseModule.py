@@ -52,6 +52,14 @@ def reorder(filename):
         return -1  # Default sorting value if RPM not found
 
 
+def extract_rpm(filename):
+    """
+    Extract RPM value from filename.
+    Alias for reorder() function for backward compatibility.
+    """
+    return reorder(filename)
+
+
 def check_files(files):
     """
     Check whether all input files have supported extensions (.xlsx or .txt).
@@ -96,6 +104,22 @@ class BaseModule(object):
 
         # Load existing result data (e.g. form1, form2, etc.), or initialize a new dictionary
         self.res_data = self.read_result_data()
+
+    def get_num(self, filename):
+        """
+        Extract the first integer number found in a filename using regular expressions.
+
+        Parameters:
+            filename (str): Input filename string (e.g., '3PFOA400ppm_75075_CA.xlsx').
+
+        Returns:
+            int or None: The first numeric match converted to int, or None if no number is found.
+
+        Notes:
+            This is commonly used to extract concentration, ID, or numeric prefixes from filenames.
+        """
+        match = re.search(r'(\d+)', filename)
+        return int(match.group(1)) if match else None
 
 
     def read_result_data(self):
@@ -143,13 +167,11 @@ class BaseModule(object):
         files = []
         real_file_path = {}
         for info in info_list:
-            # Get user-uploaded filename and real stored filename
             f = info['filename']
             file = info['existed_filename']
-            if not os.path.isfile(file):
-                continue
-            files.append(f)
-            real_file_path[f] = file
+            if os.path.isfile(file):
+                files.append(f)
+                real_file_path[f] = file
 
         # Sort files by RPM if available
         files = sorted(files, key=reorder)
@@ -157,32 +179,51 @@ class BaseModule(object):
         data = []
         for f in files:
             file = real_file_path[f]
-            if not os.path.isfile(file):
-                continue
             print(f)
-
-            if file.endswith(".xlsx"):
-                # If cached CSV exists, load it to save time
-                csv_file = file + ".csv"
-                if os.path.exists(csv_file):
-                    df = pd.read_csv(csv_file, sep=',')
-                else:
-                    data0 = pd.ExcelFile(file)
-                    df = data0.parse('Sheet1')
-                    df.to_csv(csv_file, sep=',', index=False)
-                    print("saved csv file to {}".format(csv_file))
-            elif file.endswith(".txt"):
-                df = pd.read_csv(file, delimiter=';')
-            elif file.endswith(".csv"):
-                df = pd.read_csv(file, delimiter=',')
-            else:
-                df = None
-            data.append({
-                'filename': f,
-                'df': df,
-            })
+            df = self._read_file(file)
+            if df is not None:
+                data.append({'filename': f, 'df': df})
+        
         print("data: ", len(data))
         return data
+
+    def _read_file(self, filepath):
+        """
+        Read a single file and return as DataFrame.
+        
+        Args:
+            filepath (str): Path to the file
+            
+        Returns:
+            DataFrame or None if file format not supported
+        """
+        ext = os.path.splitext(filepath)[1].lower()
+        
+        if ext == '.xlsx':
+            csv_file = filepath + ".csv"
+            if os.path.exists(csv_file):
+                return pd.read_csv(csv_file, sep=',')
+            else:
+                try:
+                    # Try openpyxl engine first (for .xlsx files)
+                    data0 = pd.ExcelFile(filepath, engine='openpyxl')
+                except Exception:
+                    try:
+                        # Fallback to xlrd for older .xls files
+                        data0 = pd.ExcelFile(filepath, engine='xlrd')
+                    except Exception as e:
+                        print(f"Error reading Excel file {filepath}: {e}")
+                        return None
+                df = data0.parse('Sheet1')
+                df.to_csv(csv_file, sep=',', index=False)
+                print(f"saved csv file to {csv_file}")
+                return df
+        elif ext == '.txt':
+            return pd.read_csv(filepath, delimiter=';')
+        elif ext == '.csv':
+            return pd.read_csv(filepath, delimiter=',')
+        else:
+            return None
 
     def pkl_save(self, data, filename):
         """
@@ -212,3 +253,90 @@ class BaseModule(object):
         with open(full_filename, 'rb') as f:
             loaded_data = pickle.load(f)
         return loaded_data
+
+    def save_plot(self, filename, xlabel='', ylabel='', title='', legend=True):
+        """
+        Save current matplotlib plot with common settings.
+        
+        Args:
+            filename (str): Output filename (will be saved in self.datapath)
+            xlabel (str): X-axis label
+            ylabel (str): Y-axis label
+            title (str): Plot title
+            legend (bool): Whether to show legend
+            
+        Returns:
+            str: Full path to saved file
+        """
+        import matplotlib.pyplot as plt
+        
+        if xlabel:
+            plt.xlabel(xlabel)
+        if ylabel:
+            plt.ylabel(ylabel)
+        if title:
+            plt.title(title)
+        if legend:
+            plt.legend()
+        
+        filepath = os.path.join(self.datapath, filename)
+        plt.savefig(filepath)
+        plt.close()
+        return filepath
+
+    def detect_column_names(self, df):
+        """
+        Detect electrochemical data column names from DataFrame.
+        
+        Supports multiple naming conventions:
+        - Autolab: 'WE(1).Potential (V)', 'WE(1).Current (A)'
+        - EC-Lab: columns containing '/V', '/A'
+        - Generic: 'Potential', 'Current', 'Voltage'
+        
+        Args:
+            df (pd.DataFrame): Input DataFrame
+            
+        Returns:
+            dict: {'potential': col_name, 'current': col_name, 'time': col_name}
+                  Returns None for columns not found
+        """
+        cols = df.columns.tolist()
+        result = {'potential': None, 'current': None, 'time': None}
+        
+        # Detect potential column
+        for col in cols:
+            col_lower = col.lower()
+            if 'potential' in col_lower and '/v' in col_lower:
+                result['potential'] = col
+                break
+            elif 'we(1).potential' in col_lower:
+                result['potential'] = col
+                break
+            elif col_lower in ['potential (v)', 'voltage (v)', 'e (v)']:
+                result['potential'] = col
+                break
+        
+        # Detect current column
+        for col in cols:
+            col_lower = col.lower()
+            if 'current' in col_lower and '/a' in col_lower:
+                result['current'] = col
+                break
+            elif 'we(1).current' in col_lower:
+                result['current'] = col
+                break
+            elif col_lower in ['current (a)', 'i (a)']:
+                result['current'] = col
+                break
+        
+        # Detect time column
+        for col in cols:
+            col_lower = col.lower()
+            if 'time' in col_lower and '/s' in col_lower:
+                result['time'] = col
+                break
+            elif col_lower in ['time (s)', 't (s)']:
+                result['time'] = col
+                break
+        
+        return result

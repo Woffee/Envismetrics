@@ -41,32 +41,12 @@ Date: 2025
 
 
 import os
+import json
+import math
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage import gaussian_filter
-from sklearn.linear_model import LinearRegression
-import math
-import re
-import json
-from config import *
 from BaseModule import BaseModule
-
-def get_num(filename):
-    """
-    Extract the first integer number found in a filename using regular expressions.
-
-    Parameters:
-        filename (str): Input filename string (e.g., '3PFOA400ppm_75075_CA.xlsx').
-
-    Returns:
-        int or None: The first numeric match converted to int, or None if no number is found.
-
-    Notes:
-        This is commonly used to extract concentration, ID, or numeric prefixes from filenames.
-    """
-    match = re.search(r'(\d+)', filename)
-    return int(match.group(1)) if match else None
 
 class CA(BaseModule):
     def __init__(self, version):
@@ -82,14 +62,33 @@ class CA(BaseModule):
         """
         super().__init__(version)
 
+    def _save_metadata(self, todata, status_msg=''):
+        """
+        Helper method to save metadata and return standardized response.
+        
+        Args:
+            todata (dict): Metadata dictionary to save
+            status_msg (str): Error message if any, empty string for success
+            
+        Returns:
+            dict: Standardized response with status, version, message, and data
+        """
+        data_file = os.path.join(self.datapath, 'data.json')
+        with open(data_file, 'w') as f:
+            json.dump(todata, f)
+            print(f"saved to: {data_file}")
+        
+        return {
+            'status': status_msg == '',
+            'version': self.version,
+            'message': 'Success' if status_msg == '' else status_msg,
+            'data': todata
+        }
+
     def check_columns(self, data):
         """
         Validate that all required columns are present in the input DataFrames.
-
-        Required columns:
-            - 'Time (s)': Time axis in seconds.
-            - 'WE(1).Current (A)': Working electrode current in amperes.
-            - 'WE(1).Potential (V)': Working electrode potential in volts.
+        Uses intelligent column detection to support multiple file formats.
 
         Args:
             data (list): List of dictionaries, each containing a 'df' key with a pandas DataFrame.
@@ -98,16 +97,20 @@ class CA(BaseModule):
             str: Empty string if all columns are present; otherwise, returns an error message
                  listing all missing columns.
         """
-        cols = ['Time (s)', 'WE(1).Current (A)', 'WE(1).Potential (V)']
-        missing_cols = []
+        missing_cols = set()
         for d in data:
             df = d['df']
-            for col in cols:
-                if col not in df.columns:
-                    missing_cols.append(col)
-        if len(missing_cols) > 0:
-            return "error: Missing columns: " + ", ".join(missing_cols)
-        return ''
+            detected = self.detect_column_names(df)
+            
+            # Check if essential columns were detected
+            if detected['time'] is None:
+                missing_cols.add('Time column (e.g., "Time (s)" or "time/s")')
+            if detected['current'] is None:
+                missing_cols.add('Current column (e.g., "WE(1).Current (A)" or "current/A")')
+            if detected['potential'] is None:
+                missing_cols.add('Potential column (e.g., "WE(1).Potential (V)" or "potential/V")')
+        
+        return f"error: Missing columns: {', '.join(missing_cols)}" if missing_cols else ''
 
     def step1(self):
         """
@@ -129,62 +132,43 @@ class CA(BaseModule):
             dict: A structured response containing success status, version, result paths,
                   or error message if any step fails.
         """
-        data_file = os.path.join(self.datapath, 'data.json')
-
-        # Load previous metadata or initialize a new record
-        if os.path.exists(data_file):
-            todata = json.loads(open(data_file, 'r').read())
-        else:
-            todata = {'version': self.version}
-
-        # Initialize CA subfield if not present
-        if 'CA' not in todata.keys():
+        todata = self.res_data.copy()
+        if 'CA' not in todata:
             todata['CA'] = {}
 
+        status_msg = ''
         try:
-            # Load data and check for required columns
             data = self.read_data()
             status_msg = self.check_columns(data)
+            
             if status_msg == '':
-                # -----------------------
                 # Plot A: Potential vs Time
-                # -----------------------
                 for d in data:
                     df = d['df']
-                    t = df['Time (s)']
-                    U = df['WE(1).Potential (V)']
-                    plt.plot(t, U, linestyle='-', linewidth=1, color='#1f77b4')
+                    plt.plot(df['Time (s)'], df['WE(1).Potential (V)'], 
+                            linestyle='-', linewidth=1, color='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Applied potential/V')
                 plt.title('A', loc='left', bbox=dict(facecolor='white', edgecolor='black'))
-                to_file1 = os.path.join(self.datapath, "CA_form1_p1.png")
-                plt.savefig(to_file1)
-                plt.close()
+                to_file1 = self.save_plot("CA_form1_p1.png", 
+                                         xlabel='time/s', 
+                                         ylabel='Applied potential/V',
+                                         legend=False)
 
-                # -----------------------
                 # Plot B: Current vs Time
-                # -----------------------
                 for d in data:
                     df = d['df']
-                    t = df['Time (s)']
-                    I = df['WE(1).Current (A)']
-                    plt.scatter(t, I, s=1, c='#1f77b4')
+                    plt.scatter(df['Time (s)'], df['WE(1).Current (A)'], s=1, c='#1f77b4')
 
-                plt.xlabel('time/s')
-                plt.ylabel('Current/A')
                 plt.title('B', loc='right', bbox=dict(facecolor='white', edgecolor='black'))
                 plt.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
-                to_file2 = os.path.join(self.datapath, "CA_form1_p2.png")
-                plt.savefig(to_file2)
-                plt.close()
+                to_file2 = self.save_plot("CA_form1_p2.png",
+                                         xlabel='time/s',
+                                         ylabel='Current/A',
+                                         legend=False)
 
-                # Save output metadata
                 todata['CA']['form1'] = {
                     'status': 'done',
-                    'input': {
-                        'uploaded_files': [],  # Currently unused
-                    },
+                    'input': {'uploaded_files': []},
                     'output': {
                         'file1': os.path.basename(to_file1),
                         'file2': os.path.basename(to_file2),
@@ -192,37 +176,13 @@ class CA(BaseModule):
                 }
 
         except Exception as e:
-            # Capture any exception as a status message
             status_msg = str(e)
-
-        # Save the metadata and return result
-        if status_msg == '':
-            with open(data_file, 'w') as f:
-                f.write(json.dumps(todata))
-                print("saved to: {}".format(data_file))
-            return {
-                'status': True,
-                'version': self.version,
-                'message': 'Success',
-                'data': todata
-            }
-        else:
-            # Save failed status to metadata
             todata['CA']['form1'] = {
                 'status': status_msg,
-                'input': {
-                    'uploaded_files': [],
-                }
+                'input': {'uploaded_files': []}
             }
-            with open(data_file, 'w') as f:
-                f.write(json.dumps(todata))
-                print("saved to: {}".format(data_file))
-            return {
-                'status': False,
-                'version': self.version,
-                'message': status_msg,
-                'data': todata
-            }
+
+        return self._save_metadata(todata, status_msg)
 
     def step2(self, inter, n, a, c, x_range=''):
         """
@@ -261,12 +221,14 @@ class CA(BaseModule):
         data = self.read_data()
         interval = len(data)
         status_msg = ''
+        
+        todata = self.res_data.copy()
+        if 'CA' not in todata:
+            todata['CA'] = {}
+            
         try:
             F = 96485  # Faraday constant in C/mol
-            A = a      # Electrode surface area (cm²)
-            C0 = c     # Bulk analyte concentration (mol/cm³)
-
-            print('electrode area (cm2):', A)
+            print('electrode area (cm2):', a)
 
             # Parse x_range input string into numerical range
             range_start, range_end = x_range.replace("[", "").replace("]", "").split(',')
@@ -281,7 +243,7 @@ class CA(BaseModule):
             for d in data:
                 filename = d['filename']
                 df = d['df']
-                j = get_num(filename)  # Extract index from filename for plotting/tracking
+                j = self.get_num(filename)  # Extract index from filename for plotting/tracking
 
                 if j > interval:
                     continue
@@ -289,11 +251,9 @@ class CA(BaseModule):
                 # Extract relevant columns
                 t = df['Time (s)'] - df['Time (s)'].iloc[0]  # Normalize time (start from 0)
                 I = df['WE(1).Current (A)']
-                U = df['WE(1).Potential (V)']
 
                 # Compute transformed Bt term based on Cottrell equation
-                t_inverse_05 = t ** (-0.5)
-                Bt = ((n * F * A * C0) / (math.pi ** 0.5)) * t_inverse_05
+                Bt = ((n * F * a * c) / (math.pi ** 0.5)) * (t ** (-0.5))
 
                 # Plot 1: Raw current vs time
                 plt.scatter(t, I, s=2, color='#1f77b4')
@@ -343,54 +303,35 @@ class CA(BaseModule):
 
             # Assemble CSV table
             table = pd.DataFrame([slope_set, D_set, R2_set], index=['slope', 'D', 'R2'])
-            new_column_names = [f'interval{i+2}' for i in range(len(D_set))]
-            table.columns = new_column_names
+            table.columns = [f'interval{i+2}' for i in range(len(D_set))]
             to_file_csv = os.path.join(self.datapath, "CA_form2.csv")
             table.to_csv(to_file_csv, index=True, sep=',')
             print("saved to:", to_file_csv)
 
-        except Exception as e:
-            status_msg = str(e)
-            D_set = []
-
-        # Update result JSON
-        todata = self.res_data
-        if 'CA' not in todata:
-            todata['CA'] = {}
-
-        if status_msg == '':
             todata['CA']['form2'] = {
                 'status': 'done',
-                'input': {
-                    'uploaded_files': [],
-                },
+                'input': {'uploaded_files': []},
                 'output': {
                     'files': to_files,
                     'D_set': D_set,
                     'csv_file': os.path.basename(to_file_csv),
                 }
             }
-            self.save_result_data(todata)
-            return {
-                'status': True,
-                'version': self.version,
-                'message': 'Success',
-                'data': todata
-            }
-        else:
+
+        except Exception as e:
+            status_msg = str(e)
             todata['CA']['form2'] = {
                 'status': status_msg,
-                'input': {
-                    'uploaded_files': [],
-                }
+                'input': {'uploaded_files': []}
             }
-            self.save_result_data(todata)
-            return {
-                'status': False,
-                'version': self.version,
-                'message': status_msg,
-                'data': todata
-            }
+
+        self.save_result_data(todata)
+        return {
+            'status': status_msg == '',
+            'version': self.version,
+            'message': 'Success' if status_msg == '' else status_msg,
+            'data': todata
+        }
 
 if __name__ == '__main__':
     # === Entry point for direct execution ===
