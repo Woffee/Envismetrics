@@ -279,18 +279,27 @@ In *Envismetrics*, users can input experimental parameters such as the fitting i
 
 Envismetrics has been employed in various research projects, demonstrating its versatility in the analysis of electrochemical systems. For instance, the software was utilized in the investigation of photocatalytic degradation of perfluorooctanoic acid (PFOA), published in *Chemosphere* [@Osonga2024], where it facilitated the precise analysis of kinetic parameters essential to understanding the degradation mechanisms. Additionally, Envismetrics played a key role in mechanistic studies on the electrochemical oxidation of dimethylamine borane (DMAB), as documented in recent works [@Torabfam2025]. In these studies, Envismetrics enabled the accurate processing of electrochemical data, which was crucial for validating the proposed mechanisms and deriving key kinetic parameters.
 
-## Author Contributions (CRediT Taxonomy)
+## Author Contributions
+
+Huize Xue, Wenbo Wang, and Dongxiao Yue contributed equally to this work.
 
 - **Huize Xue**: Conceptualization, Methodology, Software, Formal Analysis, Visualization, Data Curation, Writing – Original Draft.  
-  Led the design and development of the electrochemical analysis pipeline, including Python-based processing tools and experimental method validation. Also responsible for manuscript writing and figure preparation.
+  Led the overall design and development of the electrochemical data analysis pipeline, including core Python-based processing modules and experimental method validation. Responsible for manuscript drafting and figure preparation.
+
 - **Wenbo Wang**: Software, Writing – Review & Editing, Data Curation, Project Administration.  
-  Contributed to the front-end interface, online platform development, and GitHub repository maintenance. Assisted in server deployment and manuscript refinement.
+  Contributed to front-end interface development, online platform integration, and GitHub repository maintenance. Assisted with server deployment and manuscript revision.
+
+- **Dongxiao Yue**: Software, Validation, Debugging, Writing – Review & Editing.  
+  Contributed to software revision and debugging, validated core analysis modules, and assisted in improving code robustness and manuscript clarity.
+
 - **Xinxin Zhou**: Validation, Testing, Documentation.  
-  Performed internal testing of the software and contributed to documentation and usability feedback.
+  Performed internal software testing and contributed to documentation and usability feedback.
+
 - **Fuqin Zhou**: Investigation, Data Curation.  
   Supported data formatting and assisted with exploratory testing of selected modules.
+
 - **Omowunmi Sadik**: Supervision, Project Administration, Funding Acquisition.  
-  Provided scientific oversight and strategic guidance throughout the project. Contributed to the refinement of analysis direction and manuscript review.
+  Provided scientific oversight and strategic guidance throughout the project, and contributed to refinement of the analysis direction and manuscript review.
 
 # Technology Stack
 
