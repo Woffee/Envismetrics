@@ -44,33 +44,16 @@ date: "2024-08-30"
 bibliography: bibliography.bib
 ---
 
-# Abstract
-Envismetrics is an open-source, cross-platform Python application designed to assist researchers in the automated analysis of electrochemical data. It provides a modular toolbox for processing, visualization, and parameter extraction from techniques such as cyclic voltammetry, chronoamperometry, and hydrodynamic voltammetry. The software supports data input from selected potentiostat platforms (e.g., Autolab) and automates routine analytical steps — including peak identification, Randles–Ševčík plots, diffusion coefficient estimation, rate constant calculations, and Tafel analysis — all of which are widely used and generally essential in electrochemical analysis and simulation. Envismetrics features a graphical web interface that minimizes the need for coding and enhances accessibility for researchers across disciplines. By focusing on automation and reproducibility, Envismetrics reduces the manual workload associated with electrochemical data interpretation and promotes transparent research workflows. Its open design also allows for adaptation and further development by the community, supporting a wide range of research needs. The source code is available at [https://github.com/Woffee/Envismetrics](https://github.com/Woffee/Envismetrics).
-
 # Summary
 
-Accurate determination of kinetic parameters and thermodynamic properties from electrochemical data is fundamental for understanding redox reactions used in diverse applications [@SANECKI2003; @wang2020; @WILOCH2024; @XU2010]. These values — including diffusion coefficients, standard rate constants, transfer coefficients, and formal potentials — provide mechanistic insight and are commonly used to validate reaction pathways and simulate electrochemical behavior under various conditions [@Bacil2020].
-
-Although literature values exist for some well-studied redox systems, the evaluation of new analytes or experimental conditions typically requires experimental determination. Techniques such as cyclic voltammetry (CV), linear sweep voltammetry using a rotating disk electrode (LSV at RDE, under laminar flow and planar diffusion conditions), and step methods like chronoamperometry (CA) offer quantitative frameworks for extracting these parameters [@Bard2022].
-
-Each technique supports specific analyses and is widely adopted in electrochemical research:
-
-- **LSV at RDE**: Levich and Koutecký–Levich analysis [@Bruckenstein1977; @Treimer2002],
-- **CV**: Randles–Ševčík plots, standard rate constant estimation, and transfer coefficient analysis [@ElLatif2025; @Leftheriotis2007],
-- **CA**: Cottrell-based diffusion coefficient estimation [@Herath2008; @Gomez2023; @RodriguezLucas2025].
-
-While these methods are widely accepted, manual analysis can be labor-intensive and prone to inconsistency. To address this, **Envismetrics** is introduced as an open-source, browser-based Python application that automates data processing and analysis workflows for CV, LSV (RDE), and CA. It provides modules for filtering, peak detection, Levich regression, Randles–Ševčík analysis, and chronoamperometric fitting—offering visual outputs and tabulated results. By focusing on automation and reproducibility, Envismetrics lowers the barrier for electrochemical researchers—especially those dealing with large datasets or requiring rapid feedback—while preserving methodological rigor and transparency.
+**Envismetrics** is an open-source, browser-based Python application for automated analysis of electrochemical data. It provides a unified and modular framework for processing, visualization, and parameter extraction across commonly used techniques, including cyclic voltammetry (CV), linear sweep voltammetry at rotating disk electrodes (LSV at RDE), and chronoamperometry (CA). The software integrates established electrochemical models—such as Levich and Koutecký–Levich analysis, Randles–Ševčík relationships, Cottrell diffusion analysis, and Tafel methods—into standardized, automated workflows. These enable extraction of key kinetic and transport parameters, including diffusion coefficients, rate constants, and transfer coefficients, directly from experimental data. Envismetrics supports widely used data formats (.xlsx, .csv, .txt) and operates through a graphical web interface, eliminating the need for manual preprocessing or programming. Its modular architecture allows flexible extension to additional techniques and methods, while its open-source implementation promotes transparency and reproducibility. The platform is designed for both research and teaching applications, providing rapid, consistent, and accessible electrochemical data analysis.
 
 # Statement of Need
+**Envismetrics** is an open-source, browser-based Python application for automated analysis of electrochemical data. It provides integrated workflows for processing, visualization, and parameter extraction from commonly used techniques, including cyclic voltammetry (CV), linear sweep voltammetry at rotating disk electrodes (LSV at RDE), and chronoamperometry (CA) [@Bard2022]. The software implements standard electrochemical analyses such as peak detection, Randles–Ševčík analysis [@ElLatif2025; @Leftheriotis2007], Levich and Koutecký–Levich regression [@Bruckenstein1977; @Treimer2002], and Cottrell-based diffusion analysis [@Herath2008; @Gomez2023; @RodriguezLucas2025]. These methods enable extraction of key parameters, including diffusion coefficients, rate constants, and transfer coefficients, which are widely used in electrochemical studies [@SANECKI2003; @wang2020; @WILOCH2024; @XU2010; @Bacil2020].
+Users can upload raw experimental data in common formats (.xlsx, .csv, .txt) and obtain visual outputs and tabulated results through a graphical interface, without requiring manual preprocessing or programming. The software is modular and extensible, allowing future integration of additional techniques and analytical methods. It operates entirely in the browser, requiring no installation and supporting cross-platform use.
 
-Electrochemical researchers often rely on a patchwork of tools for data analysis and visualization, each with significant limitations. Manual spreadsheet workflows (e.g., Excel) and general-purpose plotting software (e.g., Origin, SigmaPlot) are flexible but require labor-intensive preprocessing, repeated formatting, and substantial domain expertise for kinetic modeling. Proprietary instrument software (e.g., EC-lab & NOVA) is primarily designed for device control and data acquisition; its built-in plotting is basic, vendor-specific, and rarely used for advanced kinetic analysis [@Garg2021].
-
-Envismetrics directly addresses these limitations by offering automated, reproducible workflows for key electrochemical analyses—including peak detection, Levich and Randles–Ševčík analysis, diffusion coefficient and rate constant estimation—without requiring coding. Researchers with raw data from cyclic voltammetry (CV), rotating disk electrode linear sweep voltammetry (LSV at RDE), or chronoamperometry (CA) can obtain visual plots and tabulated results in minutes, avoiding the repetitive manual steps typical of Excel/Origin pipelines or custom MATLAB/Python scripts.
-
-The platform currently supports cyclic voltammetry (CV) data exported in widely used plaintext formats (.xlsx, .csv, .txt) from NOVA and EC-Lab software—reflecting the developer’s available instrumentation. Its modular architecture, however, is designed for both platform expansion (adding compatibility with additional electrochemical workstations) and method expansion (future integration of techniques such as electrochemical impedance spectroscopy).
-
-Envismetrics runs entirely in the browser—requiring no installation or updates—and works seamlessly on Windows, macOS, and Linux. Its guided, user-friendly interface makes it equally well-suited for research laboratories and instructional settings. A direct feature comparison with other commonly used tools is provided in Table \ref{table:1}.
-
+# State of the Field
+Electrochemical data analysis is typically performed using three categories of tools: proprietary instrument software, general-purpose data analysis software, and custom scripting approaches. Proprietary software such as NOVA and EC-Lab is primarily designed for data acquisition and basic visualization, with limited support for automated kinetic analysis [@Garg2021]. General-purpose tools, including Excel, Origin, and SigmaPlot, provide flexible data handling but rely on manual workflows and do not include built-in implementations of electrochemical analysis methods such as Levich, Randles–Ševčík, or Cottrell models. Custom MATLAB or Python scripts can implement these methods, but depend on user expertise and are not standardized or easily reusable. Compared to these approaches, **Envismetrics** provides built-in implementations of commonly used electrochemical analyses within a single platform, supports automated workflows for CV, LSV at RDE, and CA, and offers a graphical interface without requiring programming. Its modular and open-source design further enables extension and reproducibility. A comparison with commonly used tools is provided in Table \ref{table:1}.
 
 | **Aspect**             | **Proprietary Instrument Software (e.g., NOVA)** | **Envismetrics**                                                                                   | **General Tools (Excel / Origin)**               |
 |------------------------|--------------------------------------------------|-----------------------------------------------------------------------------------------------------|---------------------------------------------------|
@@ -81,7 +64,6 @@ Envismetrics runs entirely in the browser—requiring no installation or updates
 | **Ease of Use**        | Steep learning curve; instrument-specific menus  | Intuitive GUI with guided steps                                                                     | Manual data cleaning and formatting required     |
 | **Output Quality**     | Basic plots                                       | **Clean, close publication ready, exportable plots**                                                       | Depends on user formatting skills                |
 | **Installation & Platform Support** | Windows-only; local install                 | **Web-based; no installation; works on Windows, macOS, Linux**                                       | Local install; Windows, macOS, Linux             |
-
 
 [Comparison of Electrochemical Data Analysis Software]\label{table:1}
 
@@ -279,7 +261,7 @@ In *Envismetrics*, users can input experimental parameters such as the fitting i
 
 Envismetrics has been employed in various research projects, demonstrating its versatility in the analysis of electrochemical systems. For instance, the software was utilized in the investigation of photocatalytic degradation of perfluorooctanoic acid (PFOA), published in *Chemosphere* [@Osonga2024], where it facilitated the precise analysis of kinetic parameters essential to understanding the degradation mechanisms. Additionally, Envismetrics played a key role in mechanistic studies on the electrochemical oxidation of dimethylamine borane (DMAB), as documented in recent works [@Torabfam2025; XUE2026]. In these studies, Envismetrics enabled the accurate processing of electrochemical data, which was crucial for validating the proposed mechanisms and deriving key kinetic parameters.
 
-## Author Contributions
+# Author Contributions
 
 Huize Xue, Wenbo Wang, and Dongxiao Yue contributed equally to this work.
 
@@ -301,18 +283,13 @@ Huize Xue, Wenbo Wang, and Dongxiao Yue contributed equally to this work.
 - **Omowunmi Sadik**: Supervision, Project Administration, Funding Acquisition.  
   Provided scientific oversight and strategic guidance throughout the project, and contributed to refinement of the analysis direction and manuscript review.
 
-# Technology Stack
-
-The online platform is primarily built with Python, leveraging the Flask framework. JQuery is employed for real-time features and asynchronous tasks. More details can be found on our GitHub repo.
-
 # Acknowledgments
 The authors acknowledge the NJIT Start-ups (172803) and the Bill Melinda Gates Foundation for funding.
-
 
 # Conflict of Interest
 The authors confirm that we have read the JOSS conflict of interest policy, that we have no COIs related to reviewing this work, and that JOSS has waived any perceived COIs for the purpose of this review.
 
-# Code of Conduct
-The authors confirm that we read and will adhere to the JOSS code of conduct.
+# AI usage disclosure
+Generative AI tools were used only to correct grammar and improve language clarity. The software design, implementation, and all technical contributions are entirely the work of the authors.
 
 # References
