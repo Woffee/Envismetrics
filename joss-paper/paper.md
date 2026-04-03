@@ -61,7 +61,7 @@ Each technique supports specific analyses and is widely adopted in electrochemic
 
 While these methods are widely accepted, manual analysis can be labor-intensive and prone to inconsistency. To address this, **Envismetrics** is introduced as an open-source, browser-based Python application that automates data processing and analysis workflows for CV, LSV (RDE), and CA. It provides modules for filtering, peak detection, Levich regression, Randles–Ševčík analysis, and chronoamperometric fitting—offering visual outputs and tabulated results. By focusing on automation and reproducibility, Envismetrics lowers the barrier for electrochemical researchers—especially those dealing with large datasets or requiring rapid feedback—while preserving methodological rigor and transparency.
 
-## Statement of Need
+# Statement of Need
 
 Electrochemical researchers often rely on a patchwork of tools for data analysis and visualization, each with significant limitations. Manual spreadsheet workflows (e.g., Excel) and general-purpose plotting software (e.g., Origin, SigmaPlot) are flexible but require labor-intensive preprocessing, repeated formatting, and substantial domain expertise for kinetic modeling. Proprietary instrument software (e.g., EC-lab & NOVA) is primarily designed for device control and data acquisition; its built-in plotting is basic, vendor-specific, and rarely used for advanced kinetic analysis [@Garg2021].
 
@@ -85,7 +85,7 @@ Envismetrics runs entirely in the browser—requiring no installation or updates
 
 [Comparison of Electrochemical Data Analysis Software]\label{table:1}
 
-# Current Functions of Envismetrics Toolbox
+# Software design:
 
 To aid in interpreting the equations below, Table 2 summarizes commonly used electrochemical parameters along with their meanings and corresponding units.
 
@@ -275,7 +275,7 @@ In *Envismetrics*, users can input experimental parameters such as the fitting i
 
 **Figure 4.** Output visualization from the CA module: (a) Current–time curve plotting module (CA-1), (b) Diffusion coefficient regression module based on Cottrell equation (CA-2).
 
-## Applications in Research
+# Research impact statement
 
 Envismetrics has been employed in various research projects, demonstrating its versatility in the analysis of electrochemical systems. For instance, the software was utilized in the investigation of photocatalytic degradation of perfluorooctanoic acid (PFOA), published in *Chemosphere* [@Osonga2024], where it facilitated the precise analysis of kinetic parameters essential to understanding the degradation mechanisms. Additionally, Envismetrics played a key role in mechanistic studies on the electrochemical oxidation of dimethylamine borane (DMAB), as documented in recent works [@Torabfam2025; XUE2026]. In these studies, Envismetrics enabled the accurate processing of electrochemical data, which was crucial for validating the proposed mechanisms and deriving key kinetic parameters.
 
